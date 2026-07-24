@@ -1,16 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-// Путь исправлен: components лежит внутри app
-import Header from "./components/Header"; 
+import Header from "@/_components/Header";
 
 export default function Home() {
   return (
     <main className="relative h-screen w-full overflow-hidden bg-black text-white flex flex-col">
       
-      {/* --- ШАПКА --- */}
+      {/* ШАПКА */}
       <Header />
 
-      {/* --- ФОН С АНИМАЦИЕЙ --- */}
+      {/* ФОН С АНИМАЦИЕЙ */}
       <div className="absolute inset-0 animate-hero-zoom will-change-transform z-0">
         <Image
           src="/hero.jpg"
@@ -22,7 +21,7 @@ export default function Home() {
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      {/* --- КОНТЕНТ --- */}
+      {/* КОНТЕНТ */}
       <div className="relative z-10 flex flex-col h-full justify-between pointer-events-none">
         <div className="h-20" /> 
 

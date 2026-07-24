@@ -2,8 +2,8 @@
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Header from "../../components/Header";
-import LikeButton from "../../components/LikeButton";
+import Header from "@/_components/Header";
+import LikeButton from "@/_components/LikeButton";
 
 // Данные для коллекции DISTRESS
 const distressCollection = [

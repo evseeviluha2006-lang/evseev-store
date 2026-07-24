@@ -3,11 +3,11 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 type LikedItem = {
   id: string;
-  type: "product" | "art" | "post"; // Тип контента
+  type: "product" | "art" | "post";
   title: string;
   image: string;
-  price?: string; // Цена (только для товаров)
-  description: string; // Описание истории создания
+  price?: string;
+  description: string;
 };
 
 const LikeContext = createContext<{
@@ -23,7 +23,6 @@ const LikeContext = createContext<{
 export function LikeProvider({ children }: { children: React.ReactNode }) {
   const [likedItems, setLikedItems] = useState<LikedItem[]>([]);
 
-  // Загрузка из памяти браузера
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("evseev-likes");
@@ -31,7 +30,6 @@ export function LikeProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Сохранение при изменении
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("evseev-likes", JSON.stringify(likedItems));
@@ -41,8 +39,8 @@ export function LikeProvider({ children }: { children: React.ReactNode }) {
   const toggleLike = (item: LikedItem) => {
     setLikedItems((prev) => {
       const exists = prev.find((i) => i.id === item.id);
-      if (exists) return prev.filter((i) => i.id !== item.id); // Удалить если уже есть
-      return [...prev, item]; // Добавить если нет
+      if (exists) return prev.filter((i) => i.id !== item.id);
+      return [...prev, item];
     });
   };
 

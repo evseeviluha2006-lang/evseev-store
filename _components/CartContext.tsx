@@ -27,7 +27,6 @@ const CartContext = createContext<{
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
 
-  // Загрузка из localStorage при старте
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("evseev-cart");
@@ -35,7 +34,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Сохранение при изменении
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("evseev-cart", JSON.stringify(items));

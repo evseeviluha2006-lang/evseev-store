@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
-import { CartProvider } from "./components/CartContext";
-import { LikeProvider } from "./components/LikeContext"; // <-- Импортируем контекст лайков
+import { CartProvider } from "@/_components/CartContext";
+import { LikeProvider } from "@/_components/LikeContext";
 
-// Настройка шрифта (убрали cyrillic, чтобы не ломать сборку)
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"], 
   variable: "--font-space",
+  display: "swap",
+});
+
+// Путь теперь относительно самого layout.tsx
+const evseevGlav = localFont({
+  src: "./fonts/EVSEEVGLAV.ttf", 
+  variable: "--font-evseev-glav",
   display: "swap",
 });
 
@@ -23,8 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${spaceGrotesk.variable} font-sans antialiased bg-black text-white`}>
-        {/* Оборачиваем в оба провайдера */}
+      <body className={`${spaceGrotesk.variable} ${evseevGlav.variable} font-sans antialiased bg-black text-white`}>
         <CartProvider>
           <LikeProvider>
             {children}
