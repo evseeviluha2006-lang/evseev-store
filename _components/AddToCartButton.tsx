@@ -44,7 +44,7 @@ export default function AddToCartButton({ product, productId }: AddToCartButtonP
       id: id,
       name: finalData.name || "Без названия",
       price: finalData.price || "0 ₽",
-      image: finalData.image || (Array.isArray(finalData.images) ? finalData.images[0] : null),
+      image: finalData.image || (Array.isArray((finalData as any).images) ? (finalData as any).images[0] : null),
       quantity: 1
     };
 
