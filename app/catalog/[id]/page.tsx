@@ -13,6 +13,7 @@ type Product = {
   price: string;
   images: string[];
   description: string;
+  sizes?: string[]; // <--- ДОБАВИЛИ ЭТУ СТРОКУ
 };
 
 const products: Product[] = [
