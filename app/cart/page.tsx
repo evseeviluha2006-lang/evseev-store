@@ -177,28 +177,20 @@ export default function CartPage() {
                 <span className="text-2xl font-black font-mono font-numbers">{totalPrice.toLocaleString()} ₽</span>
               </div>
               
-              <div className="flex gap-4">
-                {/* Обновленная кнопка оплаты */}
-                <button 
-                  onClick={handleCheckout}
-                  disabled={isSubmitting}
-                  className={`flex-grow py-4 text-xs font-bold uppercase tracking-widest transition-colors text-center ${
-                    isSubmitting 
-                      ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed' 
-                      : 'bg-white text-black hover:bg-zinc-200'
-                  }`}
+                            <div className="flex gap-4">
+                <Link 
+                  href="/checkout" 
+                  className="flex-grow py-4 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors text-center flex items-center justify-center"
                 >
-                  {isSubmitting ? 'ПЕРЕХОД К ОПЛАТЕ...' : 'ОФОРМИТЬ ЗАКАЗ'}
-                </button>
-                
+                  ОФОРМИТЬ ЗАКАЗ
+                </Link>
                 <button 
                   onClick={clearCart}
-                  disabled={isSubmitting}
-                  className="px-6 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors disabled:opacity-50"
+                  className="px-6 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors"
                 >
                   ОЧИСТИТЬ
                 </button>
-              </div>
+              </div>              </div>
             </div>
           </div>
         )}

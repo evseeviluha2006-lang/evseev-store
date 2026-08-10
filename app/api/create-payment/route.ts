@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { amount, description, orderId } = await request.json();
+    const { amount, description, orderId, metadata } = await request.json();
 
     const shopId = process.env.YOOKASSA_SHOP_ID;
     const secretKey = process.env.YOOKASSA_SECRET_KEY;
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
           return_url: `https://evseev.store/success`, 
         },
         description: description,
+        metadata: metadata || {}, // Сохраняем данные клиента в платеже ЮKassa
       }),
     });
 
