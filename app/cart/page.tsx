@@ -15,9 +15,9 @@ type CartItem = {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Состояние загрузки для кнопки оплаты
 
   useEffect(() => {
-    // ИСПРАВЛЕНО: используем evseev-cart (с дефисом)
     const stored = localStorage.getItem("evseev-cart");
     if (stored) {
       try {
@@ -57,6 +57,42 @@ export default function CartPage() {
     const priceNum = parseInt(item.price.replace(/\D/g, "")) || 0;
     return sum + priceNum * item.quantity;
   }, 0);
+
+  // Функция оплаты через ЮKassa
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) return;
+    
+    setIsSubmitting(true);
+
+    try {
+      const orderId = Date.now().toString(); // Генерируем уникальный ID заказа
+
+      // Отправляем запрос на наш серверный маршрут
+      const res = await fetch('/api/create-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount: totalPrice, // Передаем итоговую сумму
+          description: `Заказ EVSEEV #${orderId}`,
+          orderId: orderId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.url) {
+        // Перенаправляем клиента на страницу оплаты ЮKassa
+        window.location.href = data.url;
+      } else {
+        alert('Ошибка: ' + (data.error || 'Не удалось создать платеж'));
+        setIsSubmitting(false);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Ошибка соединения с платежной системой.');
+      setIsSubmitting(false);
+    }
+  };
 
   if (!isLoaded) return null;
 
@@ -102,7 +138,6 @@ export default function CartPage() {
                 <div className="flex-grow flex flex-col justify-between py-1">
                   <div>
                     <h3 className="text-sm font-bold uppercase tracking-wider mb-1">{item.name}</h3>
-                    {/* ДОБАВЛЕН КЛАСС font-numbers ДЛЯ ЦЕНЫ */}
                     <p className="text-xs font-mono text-zinc-400 font-numbers">{item.price}</p>
                   </div>
                   
@@ -114,7 +149,6 @@ export default function CartPage() {
                       >
                         -
                       </button>
-                      {/* ДОБАВЛЕН КЛАСС font-numbers ДЛЯ КОЛИЧЕСТВА */}
                       <span className="px-3 py-1 text-xs font-mono border-x border-white/20 min-w-[40px] text-center font-numbers">
                         {item.quantity}
                       </span>
@@ -140,17 +174,27 @@ export default function CartPage() {
             <div className="pt-8 border-t border-white/10 mt-8">
               <div className="flex justify-between items-end mb-8">
                 <span className="text-sm uppercase tracking-widest text-zinc-400">Итого:</span>
-                {/* ДОБАВЛЕН КЛАСС font-numbers ДЛЯ ИТОГОВОЙ СУММЫ */}
                 <span className="text-2xl font-black font-mono font-numbers">{totalPrice.toLocaleString()} ₽</span>
               </div>
               
               <div className="flex gap-4">
-                <Link href="/checkout" className="flex-grow py-4 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors text-center">
-                  ОФОРМИТЬ ЗАКАЗ
-                </Link>
+                {/* Обновленная кнопка оплаты */}
+                <button 
+                  onClick={handleCheckout}
+                  disabled={isSubmitting}
+                  className={`flex-grow py-4 text-xs font-bold uppercase tracking-widest transition-colors text-center ${
+                    isSubmitting 
+                      ? 'bg-zinc-700 text-zinc-400 cursor-not-allowed' 
+                      : 'bg-white text-black hover:bg-zinc-200'
+                  }`}
+                >
+                  {isSubmitting ? 'ПЕРЕХОД К ОПЛАТЕ...' : 'ОФОРМИТЬ ЗАКАЗ'}
+                </button>
+                
                 <button 
                   onClick={clearCart}
-                  className="px-6 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors"
+                  disabled={isSubmitting}
+                  className="px-6 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors disabled:opacity-50"
                 >
                   ОЧИСТИТЬ
                 </button>
