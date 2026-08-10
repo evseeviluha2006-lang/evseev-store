@@ -15,7 +15,6 @@ type CartItem = {
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false); // Состояние загрузки для кнопки оплаты
 
   useEffect(() => {
     const stored = localStorage.getItem("evseev-cart");
@@ -57,42 +56,6 @@ export default function CartPage() {
     const priceNum = parseInt(item.price.replace(/\D/g, "")) || 0;
     return sum + priceNum * item.quantity;
   }, 0);
-
-  // Функция оплаты через ЮKassa
-  const handleCheckout = async () => {
-    if (cartItems.length === 0) return;
-    
-    setIsSubmitting(true);
-
-    try {
-      const orderId = Date.now().toString(); // Генерируем уникальный ID заказа
-
-      // Отправляем запрос на наш серверный маршрут
-      const res = await fetch('/api/create-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: totalPrice, // Передаем итоговую сумму
-          description: `Заказ EVSEEV #${orderId}`,
-          orderId: orderId,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (data.url) {
-        // Перенаправляем клиента на страницу оплаты ЮKassa
-        window.location.href = data.url;
-      } else {
-        alert('Ошибка: ' + (data.error || 'Не удалось создать платеж'));
-        setIsSubmitting(false);
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Ошибка соединения с платежной системой.');
-      setIsSubmitting(false);
-    }
-  };
 
   if (!isLoaded) return null;
 
@@ -177,7 +140,7 @@ export default function CartPage() {
                 <span className="text-2xl font-black font-mono font-numbers">{totalPrice.toLocaleString()} ₽</span>
               </div>
               
-                            <div className="flex gap-4">
+              <div className="flex gap-4">
                 <Link 
                   href="/checkout" 
                   className="flex-grow py-4 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors text-center flex items-center justify-center"
@@ -190,7 +153,7 @@ export default function CartPage() {
                 >
                   ОЧИСТИТЬ
                 </button>
-              </div>              </div>
+              </div>
             </div>
           </div>
         )}
