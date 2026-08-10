@@ -8,27 +8,30 @@ export async function POST(request: Request) {
     const secretKey = process.env.YOOKASSA_SECRET_KEY;
 
     if (!shopId || !secretKey) {
-      return NextResponse.json({ error: 'Нет ключей ЮKassa' }, { status: 500 });
+      console.error('Нет ключей ЮKassa в env');
+      return NextResponse.json({ error: 'Ошибка конфигурации сервера' }, { status: 500 });
     }
 
+    // Формируем Basic Auth для ЮKassa
     const auth = Buffer.from(`${shopId}:${secretKey}`).toString('base64');
 
+    // Отправляем запрос на создание платежа
     const response = await fetch('https://api.yookassa.ru/v3/payments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Basic ${auth}`,
-        'Idempotence-Key': orderId,
+        'Idempotence-Key': orderId, // Защита от двойных списаний
       },
       body: JSON.stringify({
         amount: {
-          value: amount.toFixed(2),
+          value: amount.toFixed(2), // ЮKassa требует формат "100.00"
           currency: 'RUB',
         },
-        capture: true,
+        capture: true, // Сразу списываем деньги
         confirmation: {
           type: 'redirect',
-          return_url: `https://evseev.store/success`, 
+          return_url: `https://evseev.store/success`, // Куда вернуть после оплаты
         },
         description: description,
         metadata: metadata || {}, // Сохраняем данные клиента в платеже ЮKassa
@@ -40,11 +43,12 @@ export async function POST(request: Request) {
     if (data.confirmation && data.confirmation.confirmation_url) {
       return NextResponse.json({ url: data.confirmation.confirmation_url });
     } else {
-      console.error('YooKassa Error:', data);
-      return NextResponse.json({ error: 'Ошибка ЮKassa' }, { status: 500 });
+      console.error('YooKassa API Error:', data);
+      return NextResponse.json({ error: data.description || 'Ошибка ЮKassa' }, { status: 500 });
     }
+
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 });
+    console.error('Server Error:', error);
+    return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 });
   }
 }
