@@ -16,7 +16,7 @@ const products = [
     {
     id: "hoodie-tvar",
     name: "TVAR HOODIE // BLACK",
-    price: "5 500 ₽",
+    price: "7 500 ₽",
     image: "/tvar-front.jpg", // Для сетки нужна только одна картинка
     description: "Новый худи из коллекции TVAR."
   },
