@@ -13,6 +13,13 @@ const products = [
     image: "/hodie-thanks.jpg", 
     description: "Базовый худи для повседневной носки. Принт 'thanks'. Размер L (оверсайз)." 
   },
+    {
+    id: "hoodie-tvar",
+    name: "TVAR HOODIE // BLACK",
+    price: "5 500 ₽",
+    image: "/tvar-front.jpg", // Для сетки нужна только одна картинка
+    description: "Новый худи из коллекции TVAR."
+  },
   { 
     id: "hat-test-2", 
     name: "ШАПКА ТЕСТ-2 // GREY", 

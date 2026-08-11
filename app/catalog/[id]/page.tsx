@@ -24,6 +24,14 @@ const products: Product[] = [
     images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
     description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт."
   },
+    {
+    id: "hoodie-tvar",
+    name: "TVAR HOODIE // BLACK", // Или какое у него точное название
+    price: "5 500 ₽", // Поставь реальную цену
+    images: ["/tvar-front.jpg", "/tvar-glav.jpg"], // Первая - главная, вторая - доп. фото
+    description: "Новый худи из коллекции TVAR. Плотный хлопок, агрессивный крой.", // Напиши свое описание
+    sizes: ["S", "M", "L", "XL"] // Укажи доступные размеры
+  },
   {
     id: "vlad-ls",
     name: "VLAD DROBYSHEV // LONGSLEEVE",
