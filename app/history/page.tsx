@@ -8,7 +8,7 @@ const eras = [
     date: "2019–2021",
     cover: "/history/era-beginning-cover.jpg",
     description: "Знакомство с миром творчества. Учился на электрика, но душа лежала к другому. Отчисление стало точкой невозврата — я погрузился в искусство по полной.",
-    items: []
+    items: [] as { type: string; src: string; caption: string }[] // Явно указали тип пустого массива
   },
   {
     id: "first-show",
@@ -16,7 +16,7 @@ const eras = [
     date: "2022",
     cover: "/history/era-first-show-cover.jpg",
     description: "Постановка первого показа мод. Активные знакомства в Калининграде, поступление на конструктора-модельера. Защита двух дипломных работ с отличием.",
-    items: []
+    items: [] as { type: string; src: string; caption: string }[]
   },
   {
     id: "bastion",
@@ -24,7 +24,7 @@ const eras = [
     date: "2023",
     cover: "/history/era-bastion-cover.jpg",
     description: "Большой показ совместно с проектом Электродвор. Всё пошло не по плану, руки опускались, но я не сдался. Работал дальше вопреки всему.",
-    items: []
+    items: [] as { type: string; src: string; caption: string }[]
   },
   {
     id: "new-paths",
@@ -32,7 +32,7 @@ const eras = [
     date: "2024",
     cover: "/history/era-new-paths-cover.jpg",
     description: "Поиск новых путей развития. Эксперименты с формами, материалами и подачей. Начало работы над коллекциями DISTRESSED и WINTER 2.6.",
-    items: []
+    items: [] as { type: string; src: string; caption: string }[]
   }
 ];
 
