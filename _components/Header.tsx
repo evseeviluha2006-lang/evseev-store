@@ -7,6 +7,7 @@ const navLinks = [
   { href: "/catalog", label: "ТОВАРЫ" },
   { href: "/collections", label: "КОЛЛЕКЦИИ" },
   { href: "/education", label: "ОБУЧЕНИЕ" },
+  { href: "/contacts", label: "КОНТАКТЫ" },
 ];
 
 export default function Header() {
