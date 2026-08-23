@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useRef } from "react"; // Добавили useRef
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Header from "@/_components/Header";
@@ -13,24 +12,24 @@ type Product = {
   price: string;
   images: string[];
   description: string;
-  sizes?: string[]; // <--- ДОБАВИЛИ ЭТУ СТРОКУ
+  sizes?: string[];
 };
 
 const products: Product[] = [
+  {
+    id: "hoodie-tvar",
+    name: "TVAR HOODIE // BLACK",
+    price: "5 500 ₽",
+    images: ["/tvar-front.jpg", "/tvar-glav.jpg"],
+    description: "Новый худи из коллекции TVAR. Плотный хлопок, агрессивный крой.",
+    sizes: ["S", "M", "L", "XL"]
+  },
   {
     id: "vlad-tee",
     name: "VLAD DROBYSHEV // TEE",
     price: "4 500 ₽",
     images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
     description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт."
-  },
-    {
-    id: "hoodie-tvar",
-    name: "TVAR HOODIE // BLACK", // Или какое у него точное название
-    price: "7 500 ₽", // Поставь реальную цену
-    images: ["/tvar-front.jpg", "/tvar-glav.jpg"], // Первая - главная, вторая - доп. фото
-    description: "Новый худи из коллекции TVAR. Плотный хлопок, агрессивный крой.", // Напиши свое описание
-    sizes: ["S", "M", "L", "XL"] // Укажи доступные размеры
   },
   {
     id: "vlad-ls",
@@ -43,25 +42,14 @@ const products: Product[] = [
     id: "vlad-cape",
     name: "VLAD DROBYSHEV // CAPE",
     price: "7 500 ₽",
-    images: [
-      "/vlad-cape-front.jpg",
-      "/vlad-cape-full.jpg",
-      "/vlad-cape-full1.jpg",
-      "/vlad-cape-full2.jpg"
-    ],
+    images: ["/vlad-cape-front.jpg", "/vlad-cape-full.jpg", "/vlad-cape-full1.jpg", "/vlad-cape-full2.jpg"],
     description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ."
   },
   {
     id: "hat-test-2",
     name: "ШАПКА ТЕСТ-2 // GREY",
     price: "2 000 ₽",
-    images: [
-      "/test-front.jpg", 
-      "/test-full.jpg", 
-      "/test-full1.jpg", 
-      "/test-full2.jpg", 
-      "/test-full3.jpg"
-    ],
+    images: ["/test-front.jpg", "/test-full.jpg", "/test-full1.jpg", "/test-full2.jpg", "/test-full3.jpg"],
     description: "Материал: 100% хлопок. Принт 'ТЕСТ-2'. Размер универсальный.",
     sizes: ["ONE SIZE"]
   },
@@ -72,7 +60,7 @@ const products: Product[] = [
     images: ["/hodie-thanks.jpg"],
     description: "Довольно давняя работа. Сделал базовый худак для повседневной носки. Принт спереди: thanks. Размер только один — L (по сетке оверсайз).",
     sizes: ["L"]
-  },  
+  },
   {
     id: "fuck-its-evs-top",
     name: "FUCK IT'S EVS // TOP",
@@ -134,11 +122,13 @@ const products: Product[] = [
 export default function ProductPage() {
   const params = useParams();
   const id = params?.id as string;
-  
   const product = products.find((p) => p.id === id);
-  const [activeImage, setActiveImage] = useState<string | null>(
-    product ? (product.images[0] || null) : null
-  );
+  
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  
+  // Переменные для свайпа
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   if (!product) {
     return (
@@ -151,24 +141,50 @@ export default function ProductPage() {
     );
   }
 
+  // Логика свайпа
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 50; // Свайп влево (следующее фото)
+    const isRightSwipe = distance < -50; // Свайп вправо (предыдущее фото)
+
+    if (isLeftSwipe && activeImageIndex < product.images.length - 1) {
+      setActiveImageIndex(activeImageIndex + 1);
+    } else if (isRightSwipe && activeImageIndex > 0) {
+      setActiveImageIndex(activeImageIndex - 1);
+    }
+    
+    // Сброс
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
+
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
       <Header />
-      
       <div className="flex-grow pt-24 pb-10 px-4 md:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-start">
         
         {/* ГАЛЕРЕЯ */}
-        <div className="flex gap-4 w-full md:w-auto">
+        <div className="flex gap-4 w-full md:w-auto flex-col md:flex-row">
           
-          {/* Миниатюры */}
-          <div className="hidden md:flex flex-col gap-4 w-[80px] flex-shrink-0">
+          {/* Миниатюры (только десктоп) */}
+          <div className="hidden md:flex flex-col gap-4 w-[80px] flex-shrink-0 order-2 md:order-1">
             {product.images.map((img, idx) => (
               <button
                 key={idx}
-                onClick={() => setActiveImage(img)}
+                onClick={() => setActiveImageIndex(idx)}
                 className={`relative aspect-square w-full overflow-hidden border transition-all duration-200 ${
-                  activeImage === img 
-                    ? "border-white opacity-100 ring-1 ring-white/50" 
+                  activeImageIndex === idx
+                    ? "border-white opacity-100 ring-1 ring-white/50"
                     : "border-white/20 opacity-50 hover:opacity-80"
                 }`}
               >
@@ -177,64 +193,88 @@ export default function ProductPage() {
             ))}
           </div>
 
-          {/* Основное фото */}
-          <div className="relative w-full md:w-[600px] min-h-[400px] bg-zinc-900 overflow-hidden border border-white/10 group flex items-center justify-center">
-            {activeImage && (
-              <Image 
-                key={activeImage} 
-                src={activeImage} 
-                alt={product.name} 
+          {/* Основное фото (с поддержкой свайпов) */}
+          <div 
+            className="relative w-full md:w-[600px] min-h-[400px] md:min-h-[600px] bg-zinc-900 overflow-hidden border border-white/10 group flex items-center justify-center order-1 md:order-2 select-none"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+            {product.images[activeImageIndex] && (
+              <Image
+                key={product.images[activeImageIndex]}
+                src={product.images[activeImageIndex]}
+                alt={product.name}
                 width={1200}
                 height={1600}
-                className="w-full h-auto object-contain animate-slide-up-blur" 
-                priority 
+                className="w-full h-auto object-contain animate-slide-up-blur pointer-events-none"
+                priority
               />
             )}
             
             <div className="absolute top-4 right-4 z-20">
-               <LikeButton 
-                 id={product.id}
-                 type="product"
-                 title={product.name}
-                 image={product.images[0]}
-                 price={product.price}
-                 description={product.description}
-                 size="md"
-               />
+              <LikeButton
+                id={product.id}
+                type="product"
+                title={product.name}
+                image={product.images[0]}
+                price={product.price}
+                description={product.description}
+                size="md"
+              />
             </div>
 
-            {/* Точки для мобильных */}
-            <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 md:hidden">
-              {product.images.map((img, idx) => (
-                <button 
-                  key={idx} 
-                  onClick={() => setActiveImage(img)}
-                  className={`w-2 h-2 rounded-full transition-all ${activeImage === img ? "bg-white w-6" : "bg-white/30"}`}
-                />
-              ))}
+            {/* Индикаторы для мобильных (точки + счетчик) */}
+            <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 md:hidden z-20">
+               <span className="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
+                 {activeImageIndex + 1} / {product.images.length}
+               </span>
+               <div className="flex justify-center gap-2">
+                {product.images.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all ${activeImageIndex === idx ? "bg-white w-6" : "bg-white/30 w-1.5"}`}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {/* Стрелки для десктопа (опционально, если хочешь кликать мышкой) */}
+            <div className="hidden md:flex absolute inset-y-0 left-0 right-0 justify-between items-center px-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20">
+               <button 
+                 onClick={() => setActiveImageIndex(Math.max(0, activeImageIndex - 1))}
+                 className="pointer-events-auto p-2 bg-black/50 rounded-full text-white hover:bg-black/80 disabled:opacity-0"
+                 disabled={activeImageIndex === 0}
+               >
+                 ←
+               </button>
+               <button 
+                 onClick={() => setActiveImageIndex(Math.min(product.images.length - 1, activeImageIndex + 1))}
+                 className="pointer-events-auto p-2 bg-black/50 rounded-full text-white hover:bg-black/80 disabled:opacity-0"
+                 disabled={activeImageIndex === product.images.length - 1}
+               >
+                 →
+               </button>
             </div>
           </div>
-
         </div>
-        
+
         {/* ИНФОРМАЦИЯ */}
         <div className="flex flex-col justify-center h-full py-8 md:py-0 sticky top-24">
           <div className="mb-6 text-[10px] font-mono text-zinc-500 tracking-widest uppercase">
             SEASON 01 // 2024
           </div>
-
           <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-2 uppercase leading-[0.9]">
             {product.name}
           </h1>
-          
           <p className="text-2xl text-zinc-300 mb-8 font-mono font-numbers">{product.price}</p>
-          
           <p className="text-zinc-400 leading-relaxed mb-10 text-sm md:text-base max-w-md">
             {product.description}
           </p>
           
           <AddToCartButton product={product} />
-
+          
           <div className="mt-12 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 text-[10px] font-mono text-zinc-600">
             <div>МАТЕРИАЛ: 100% COTTON</div>
             <div>ПРОИЗВОДСТВО: RUSSIA</div>
