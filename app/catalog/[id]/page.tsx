@@ -1,7 +1,8 @@
 "use client";
-import { useState, useRef } from "react"; // Добавили useRef
+import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link"; // Добавили Link для перехода между товарами
 import Header from "@/_components/Header";
 import AddToCartButton from "@/_components/AddToCartButton";
 import LikeButton from "@/_components/LikeButton";
@@ -13,6 +14,7 @@ type Product = {
   images: string[];
   description: string;
   sizes?: string[];
+  collection: string; // <--- ДОБАВИЛИ ПОЛЕ КОЛЛЕКЦИИ
 };
 
 const products: Product[] = [
@@ -22,28 +24,32 @@ const products: Product[] = [
     price: "5 500 ₽",
     images: ["/tvar-front.jpg", "/tvar-glav.jpg"],
     description: "Новый худи из коллекции TVAR. Плотный хлопок, агрессивный крой.",
-    sizes: ["S", "M", "L", "XL"]
+    sizes: ["S", "M", "L", "XL"],
+    collection: "tvar" // Коллекция TVAR
   },
   {
     id: "vlad-tee",
     name: "VLAD DROBYSHEV // TEE",
     price: "4 500 ₽",
     images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
-    description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт."
+    description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт.",
+    collection: "vlad" // Коллекция VLAD
   },
   {
     id: "vlad-ls",
     name: "VLAD DROBYSHEV // LONGSLEEVE",
     price: "5 900 ₽",
     images: ["/vlad-ls-front.jpg", "/vlad-ls-full.jpg", "/vlad-ls-full1.jpg"],
-    description: "Лонгслив с агрессивным дизайном. Плотный хлопок."
+    description: "Лонгслив с агрессивным дизайном. Плотный хлопок.",
+    collection: "vlad"
   },
   {
     id: "vlad-cape",
     name: "VLAD DROBYSHEV // CAPE",
     price: "7 500 ₽",
     images: ["/vlad-cape-front.jpg", "/vlad-cape-full.jpg", "/vlad-cape-full1.jpg", "/vlad-cape-full2.jpg"],
-    description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ."
+    description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ.",
+    collection: "vlad"
   },
   {
     id: "hat-test-2",
@@ -51,7 +57,8 @@ const products: Product[] = [
     price: "2 000 ₽",
     images: ["/test-front.jpg", "/test-full.jpg", "/test-full1.jpg", "/test-full2.jpg", "/test-full3.jpg"],
     description: "Материал: 100% хлопок. Принт 'ТЕСТ-2'. Размер универсальный.",
-    sizes: ["ONE SIZE"]
+    sizes: ["ONE SIZE"],
+    collection: "test" // Коллекция TEST
   },
   {
     id: "hoodie-spasibo",
@@ -59,63 +66,72 @@ const products: Product[] = [
     price: "5 000 ₽",
     images: ["/hodie-thanks.jpg"],
     description: "Довольно давняя работа. Сделал базовый худак для повседневной носки. Принт спереди: thanks. Размер только один — L (по сетке оверсайз).",
-    sizes: ["L"]
+    sizes: ["L"],
+    collection: "archive" // Старые вещи -> ARCHIVE
   },
   {
     id: "fuck-its-evs-top",
     name: "FUCK IT'S EVS // TOP",
     price: "3 500 ₽",
     images: ["/product2.jpg"],
-    description: "Укороченный топ с агрессивным принтом. Плотный хлопок."
+    description: "Укороченный топ с агрессивным принтом. Плотный хлопок.",
+    collection: "winter 2.6" // Судя по стилю -> 18+
   },
   {
     id: "18-plus-w-evs-top",
     name: "18+ W EVS // TOP",
     price: "3 500 ₽",
     images: ["/18+w-front.jpg", "/18+w-full1.jpg", "/18+w-full2.jpg"],
-    description: "Белый топ с красным трафаретным принтом. Оверсайз крой."
+    description: "Белый топ с красным трафаретным принтом. Оверсайз крой.",
+    collection: "winter 2.6"
   },
   {
     id: "18-plus-evs-top",
     name: "18+ EVS // TOP",
     price: "3 500 ₽",
     images: ["/18+-front.jpg", "/18+-full1.jpg", "/18+-full2.jpg", "/18+-full3.jpg"],
-    description: "Черный топ с оранжевым принтом. Укороченная длина."
+    description: "Черный топ с оранжевым принтом. Укороченная длина.",
+    collection: "winter 2.6"
   },
   {
     id: "distressed-pants",
     name: "DISTRESSED PANTS",
     price: "7 990 ₽",
     images: ["/dipa-front.jpg", "/dipa-back.jpg", "/dipa-full.jpg", "/dipa-full2.jpg", "/dipa-glav.jpg"],
-    description: "Джинсы с эффектом дистресс из коллекции DIPA."
+    description: "Джинсы с эффектом дистресс из коллекции DIPA.",
+    collection: "dipa" // Коллекция DIPA
   },
   {
     id: "radioevs-shirt",
     name: "RADIOEVS SHIRT // INSPIRED BY RADIOHEAD",
     price: "5 990 ₽",
     images: ["/radioevs-shirt-front.jpg", "/radioevs-shirt-full.jpg", "/radioevs-shirt-full2.jpg", "/radioevs-shirt-full3.jpg", "/radioevs-shirt-full4.jpg", "/radioevs-shirt-full5.jpg"],
-    description: "Футболка, созданная по вдохновению группой Radiohead."
+    description: "Футболка, созданная по вдохновению группой Radiohead.",
+    collection: "dipa" // Коллекция RADIOEVS
   },
   {
     id: "redholes-pants",
     name: "RED HOLES PANTS // DISTRESSED",
     price: "8 490 ₽",
     images: ["/redholes-front.jpg", "/redholes-back.jpg", "/redholes-full.jpg", "/redholes-full2.jpg", "/redholes-full3.jpg"],
-    description: "Штаны с огромными дырками на коленях."
+    description: "Штаны с огромными дырками на коленях.",
+    collection: "dipa" // По стилю (дырки) относим к DIPA
   },
   {
     id: "krest-jacket",
     name: "KREST JACKET // CRUSADER",
     price: "18 990 ₽",
     images: ["/krest-jacket-front.jpg", "/krest-jacket-double.jpg", "/krest-jacket-full.jpg"],
-    description: "Куртка выполнена по технике сшивания множества маленьких кусочков ткани."
+    description: "Куртка выполнена по технике сшивания множества маленьких кусочков ткани.",
+    collection: "dipa" // Уникальная вещь -> ARCHIVE
   },
   {
     id: "psyho-jacket",
     name: "PSYHO JACKET // SLIM FIT",
     price: "14 990 ₽",
     images: ["/psyho-jacket-front.jpg", "/psyho-jacket-full.jpg"],
-    description: "Эта куртка выполнена в слим фит."
+    description: "Эта куртка выполнена в слим фит.",
+    collection: "dipa" // Уникальная вещь -> ARCHIVE
   },
 ];
 
@@ -154,8 +170,8 @@ export default function ProductPage() {
     if (!touchStartX.current || !touchEndX.current) return;
     
     const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 50; // Свайп влево (следующее фото)
-    const isRightSwipe = distance < -50; // Свайп вправо (предыдущее фото)
+    const isLeftSwipe = distance > 50; 
+    const isRightSwipe = distance < -50; 
 
     if (isLeftSwipe && activeImageIndex < product.images.length - 1) {
       setActiveImageIndex(activeImageIndex + 1);
@@ -163,10 +179,12 @@ export default function ProductPage() {
       setActiveImageIndex(activeImageIndex - 1);
     }
     
-    // Сброс
     touchStartX.current = null;
     touchEndX.current = null;
   };
+
+  // Фильтруем похожие товары (та же коллекция, но не текущий товар)
+  const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
@@ -224,7 +242,7 @@ export default function ProductPage() {
               />
             </div>
 
-            {/* Индикаторы для мобильных (точки + счетчик) */}
+            {/* Индикаторы для мобильных */}
             <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 md:hidden z-20">
                <span className="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
                  {activeImageIndex + 1} / {product.images.length}
@@ -240,7 +258,7 @@ export default function ProductPage() {
               </div>
             </div>
             
-            {/* Стрелки для десктопа (опционально, если хочешь кликать мышкой) */}
+            {/* Стрелки для десктопа */}
             <div className="hidden md:flex absolute inset-y-0 left-0 right-0 justify-between items-center px-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20">
                <button 
                  onClick={() => setActiveImageIndex(Math.max(0, activeImageIndex - 1))}
@@ -283,6 +301,42 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* БЛОК: ТАК ЖЕ ИЗ ЭТОЙ КОЛЛЕКЦИИ */}
+      {relatedProducts.length > 0 && (
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 mt-12 border-t border-white/10 pt-12">
+          <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-8">
+            Так же из этой коллекции
+          </h3>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {relatedProducts.map((relatedProduct) => (
+              <Link 
+                href={`/catalog/${relatedProduct.id}`} 
+                key={relatedProduct.id}
+                className="group block"
+              >
+                <div className="relative aspect-[3/4] w-full bg-zinc-900 overflow-hidden border border-white/5 mb-3">
+                  {relatedProduct.images[0] && (
+                    <Image 
+                      src={relatedProduct.images[0]} 
+                      alt={relatedProduct.name}
+                      fill
+                      className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                    />
+                  )}
+                </div>
+                <h4 className="text-xs font-bold uppercase tracking-wide truncate group-hover:text-white text-zinc-400 transition-colors">
+                  {relatedProduct.name}
+                </h4>
+                <p className="text-xs font-mono text-zinc-500 mt-1">
+                  {relatedProduct.price}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </main>
   );
 }
