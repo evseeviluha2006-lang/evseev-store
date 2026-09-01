@@ -1,15 +1,19 @@
 "use client";
 import { useState } from "react";
 
+// БАЗА ДАННЫХ ТОВАРОВ ДЛЯ КОРЗИНЫ
+// Сюда добавлены hoodie-tvar и school-jeans
 const PRODUCTS_DB: Record<string, { name: string; price: string; image: string }> = {
+  "school-jeans": { name: "SCHOOL JEANS // PRE-ORDER", price: "6 500 ₽", image: "/school_jeans_front.jpg" },
+  "hoodie-tvar": { name: "TVAR HOODIE // BLACK", price: "5 500 ₽", image: "/tvar-front.jpg" },
   "hat-test-2": { name: "ШАПКА ТЕСТ-2 // GREY", price: "2 000 ₽", image: "/test-front.jpg" },
   "hoodie-spasibo": { name: "ХУДИ СПАСИБО // BLACK", price: "5 000 ₽", image: "/hodie-thanks.jpg" },
   "vlad-tee": { name: "VLAD DROBYSHEV // TEE", price: "4 500 ₽", image: "/vlad-tee-front.jpg" },
   "vlad-ls": { name: "VLAD DROBYSHEV // LONGSLEEVE", price: "5 900 ₽", image: "/vlad-ls-front.jpg" },
   "vlad-cape": { name: "VLAD DROBYSHEV // CAPE", price: "7 500 ₽", image: "/vlad-cape-front.jpg" },
-  "fuck-its-evs-top": { name: "FUCK IT'S EVS // TOP", price: "3 500 ₽", image: "/product1.jpg" },
-  "18-plus-w-evs-top": { name: "18+ W EVS // TOP", price: "3 500 ₽", image: "/product2.jpg" },
-  "18-plus-evs-top": { name: "18+ EVS // TOP", price: "3 500 ₽", image: "/product3.jpg" },
+  "fuck-its-evs-top": { name: "FUCK IT'S EVS // TOP", price: "3 500 ₽", image: "/product2.jpg" },
+  "18-plus-w-evs-top": { name: "18+ W EVS // TOP", price: "3 500 ₽", image: "/18+w-front.jpg" },
+  "18-plus-evs-top": { name: "18+ EVS // TOP", price: "3 500 ₽", image: "/18+-front.jpg" },
   "distressed-pants": { name: "DISTRESSED PANTS", price: "7 990 ₽", image: "/dipa-front.jpg" },
   "radioevs-shirt": { name: "RADIOEVS SHIRT // INSPIRED BY RADIOHEAD", price: "5 990 ₽", image: "/radioevs-shirt-front.jpg" },
   "redholes-pants": { name: "RED HOLES PANTS // DISTRESSED", price: "8 490 ₽", image: "/redholes-front.jpg" },
@@ -20,9 +24,10 @@ const PRODUCTS_DB: Record<string, { name: string; price: string; image: string }
 type AddToCartButtonProps = {
   product?: any;
   productId?: string;
+  customText?: string; // <--- ДОБАВИЛИ ПОЛЕ ДЛЯ СМЕНЫ ТЕКСТА
 };
 
-export default function AddToCartButton({ product, productId }: AddToCartButtonProps) {
+export default function AddToCartButton({ product, productId, customText }: AddToCartButtonProps) {
   const [isAdded, setIsAdded] = useState(false);
 
   const handleAdd = () => {
@@ -52,7 +57,7 @@ export default function AddToCartButton({ product, productId }: AddToCartButtonP
       console.warn(`️ У товара ${id} нет картинки! Проверь PRODUCTS_DB`);
     }
 
-    // ИСПРАВЛЕНО: используем evseev-cart вместо evseev_cart
+    // Читаем корзину
     const stored = localStorage.getItem("evseev-cart");
     let cart: any[] = [];
     if (stored) {
@@ -80,13 +85,14 @@ export default function AddToCartButton({ product, productId }: AddToCartButtonP
     <button
       onClick={handleAdd}
       disabled={isAdded}
-      className={`w-full py-4 text-xs font-bold uppercase tracking-widest transition-all duration-300 border ${
+      className={`w-full py-5 text-sm font-black uppercase tracking-[4px] transition-all duration-300 border ${
         isAdded 
           ? "bg-green-600 border-green-600 text-white cursor-default" 
           : "bg-white border-white text-black hover:bg-zinc-200"
       }`}
     >
-      {isAdded ? "ДОБАВЛЕНО ✓" : "ДОБАВИТЬ В КОРЗИНУ →"}
+      {/* Если товар добавлен - пишем "ДОБАВЛЕНО", иначе - customText или стандартный текст */}
+      {isAdded ? "ДОБАВЛЕНО ✓" : (customText || "ДОБАВИТЬ В КОРЗИНУ →")}
     </button>
   );
 }
