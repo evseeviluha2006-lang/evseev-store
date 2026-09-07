@@ -153,8 +153,6 @@ export default function ProductPage() {
   const params = useParams();
   const id = params?.id as string;
   const product = products.find((p) => p.id === id);
-  
-  // Добавили состояние для выбранного размера
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -341,7 +339,7 @@ export default function ProductPage() {
             </div>
           )}
           
-          {/* БЛОК ВЫБОРА РАЗМЕРА (ОБНОВЛЕННЫЙ) */}
+          {/* БЛОК ВЫБОРА РАЗМЕРА */}
           {product.sizes && product.sizes.length > 0 && (
              <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
@@ -368,17 +366,25 @@ export default function ProductPage() {
              </div>
           )}
 
-          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА */}
+          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА (ИСПРАВЛЕНО) */}
           <div className="mb-4">
-             <AddToCartButton 
-                product={{...product, selectedSize}} // Передаем выбранный размер в товар
-                customText={product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : undefined} 
-                disabled={!selectedSize} // Блокируем кнопку, если размер не выбран
-             />
-             {!selectedSize && (
-                <p className="mt-2 text-[10px] text-zinc-600 text-center uppercase tracking-wider">
-                  Выберите размер для продолжения
-                </p>
+             {!selectedSize ? (
+                <>
+                   <button 
+                     disabled 
+                     className="w-full py-5 bg-zinc-800 text-zinc-500 text-sm font-black uppercase tracking-[4px] cursor-not-allowed opacity-50"
+                   >
+                     {product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : "ДОБАВИТЬ В КОРЗИНУ"}
+                   </button>
+                   <p className="mt-2 text-[10px] text-red-500 text-center uppercase tracking-wider animate-pulse">
+                     Выберите размер для продолжения
+                   </p>
+                </>
+             ) : (
+                <AddToCartButton 
+                   product={{...product, selectedSize}} 
+                   customText={product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : undefined} 
+                />
              )}
           </div>
           
