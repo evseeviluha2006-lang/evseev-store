@@ -23,13 +23,13 @@ const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "5 500 ₽",
+    price: "6 500 ₽",
     images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
     description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка. Оформляя предзаказ, ты гарантируешь себе пару из первой лимитированной партии.",
     sizes: ["S", "M", "L", "XL"],
     collection: "school",
     isPreorder: true, // <--- ВКЛЮЧИЛИ РЕЖИМ ПРЕДЗАКАЗА
-    preorderDate: "15 СЕНТЯБРЯ" // <--- УКАЗАЛИ ДАТУ
+    preorderDate: "21 СЕНТЯБРЯ" // <--- УКАЗАЛИ ДАТУ
   },
   {
     id: "hoodie-tvar",
