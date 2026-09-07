@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/_components/Header";
 import AddToCartButton from "@/_components/AddToCartButton";
 import LikeButton from "@/_components/LikeButton";
+import SizeGuide from "@/_components/SizeGuide";
 
 type Product = {
   id: string;
@@ -15,21 +16,21 @@ type Product = {
   description: string;
   sizes?: string[];
   collection?: string;
-  isPreorder?: boolean; // <--- ДОБАВИЛИ ПОЛЕ ПРЕДЗАКАЗА
-  preorderDate?: string; // <--- ДАТА ОТПРАВКИ
+  isPreorder?: boolean;
+  preorderDate?: string;
 };
 
 const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "6 500 ₽",
+    price: "5 990 ₽",
     images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
     description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка. Оформляя предзаказ, ты гарантируешь себе пару из первой лимитированной партии.",
     sizes: ["S", "M", "L", "XL"],
     collection: "school",
-    isPreorder: true, // <--- ВКЛЮЧИЛИ РЕЖИМ ПРЕДЗАКАЗА
-    preorderDate: "21 СЕНТЯБРЯ" // <--- УКАЗАЛИ ДАТУ
+    isPreorder: true,
+    preorderDate: "21 СЕНТЯБРЯ"
   },
   {
     id: "hoodie-tvar",
@@ -40,7 +41,6 @@ const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     collection: "tvar"
   },
-  // ... остальные товары (vlad-tee, vlad-ls и т.д.) оставь как были, я их не копирую сюда для краткости, но в файле они должны быть
   {
     id: "vlad-tee",
     name: "VLAD DROBYSHEV // TEE",
@@ -154,6 +154,8 @@ export default function ProductPage() {
   const id = params?.id as string;
   const product = products.find((p) => p.id === id);
   
+  // Добавили состояние для выбранного размера
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
@@ -163,7 +165,7 @@ export default function ProductPage() {
       <main className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold uppercase mb-4">ТОВАР НЕ НАЙДЕН</h1>
-          <a href="/catalog" className="text-zinc-500 underline hover:text-white">Вернуться в каталог</a>
+          <Link href="/catalog" className="text-zinc-500 underline hover:text-white">Вернуться в каталог</Link>
         </div>
       </main>
     );
@@ -192,14 +194,13 @@ export default function ProductPage() {
     touchEndX.current = null;
   };
 
-  // Фильтруем похожие товары
   const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
       <Header />
       
-      {/* БАННЕР ПРЕДЗАКАЗА (Если включен) */}
+      {/* БАННЕР ПРЕДЗАКАЗА */}
       {product.isPreorder && (
         <div className="w-full bg-red-600 text-white text-center py-2 text-xs font-bold tracking-[4px] uppercase animate-pulse">
           LIMITED PRE-ORDER // ОТПРАВКА {product.preorderDate}
@@ -302,7 +303,7 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ИНФОРМАЦИЯ */}
+        {/* ИНФОРМАЦИЯ И ВЫБОР РАЗМЕРА */}
         <div className="flex flex-col justify-center h-full py-8 md:py-0 sticky top-24">
           <div className="mb-6 text-[10px] font-mono text-zinc-500 tracking-widest uppercase flex items-center gap-2">
             {product.isPreorder ? (
@@ -340,16 +341,45 @@ export default function ProductPage() {
             </div>
           )}
           
-          {/* КНОПКА (Меняем текст если предзаказ) */}
+          {/* БЛОК ВЫБОРА РАЗМЕРА (ОБНОВЛЕННЫЙ) */}
+          {product.sizes && product.sizes.length > 0 && (
+             <div className="mb-8">
+                <div className="flex justify-between items-center mb-3">
+                   <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Выберите размер:</p>
+                   {!selectedSize && <span className="text-[10px] text-red-500 uppercase tracking-wider">Обязательно</span>}
+                </div>
+                
+                <div className="grid grid-cols-4 gap-2 mb-4">
+                   {product.sizes.map(size => (
+                      <button 
+                        key={size} 
+                        onClick={() => setSelectedSize(size)}
+                        className={`py-3 border text-sm font-bold transition-all ${
+                          selectedSize === size 
+                            ? 'bg-white text-black border-white' 
+                            : 'bg-transparent text-white border-white/20 hover:border-white'
+                        }`}
+                      >
+                        {size}
+                      </button>
+                   ))}
+                </div>
+                <SizeGuide />
+             </div>
+          )}
+
+          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА */}
           <div className="mb-4">
-             {/* Здесь мы используем твой компонент AddToCartButton, но если он не умеет менять текст, 
-                 нам придется либо поменять его внутри, либо сделать кнопку прямо тут.
-                 Давай сделаем кнопку прямо тут для надежности визуала */}
-             
              <AddToCartButton 
-                product={product} 
+                product={{...product, selectedSize}} // Передаем выбранный размер в товар
                 customText={product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : undefined} 
+                disabled={!selectedSize} // Блокируем кнопку, если размер не выбран
              />
+             {!selectedSize && (
+                <p className="mt-2 text-[10px] text-zinc-600 text-center uppercase tracking-wider">
+                  Выберите размер для продолжения
+                </p>
+             )}
           </div>
           
           <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 text-[10px] font-mono text-zinc-600">
@@ -361,7 +391,7 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* БЛОК: ТАК ЖЕ ИЗ ЭТОЙ КОЛЛЕКЦИИ */}
+      {/* ПОХОЖИЕ ТОВАРЫ */}
       {relatedProducts.length > 0 && (
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 mt-12 border-t border-white/10 pt-12">
           <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-8">

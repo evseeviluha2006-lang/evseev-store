@@ -17,7 +17,7 @@ const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "6 500 ₽",
+    price: "5 990 ₽",
     image: "/school_jeans_front.jpg",
     isPreorder: true, // <--- ВКЛЮЧИЛИ ПЛАШКУ
   },
