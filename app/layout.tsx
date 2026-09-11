@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { CartProvider } from "@/_components/CartContext";
 import { LikeProvider } from "@/_components/LikeContext";
+import PreorderWidget from "@/_components/PreorderWidget"; // <-- ДОБАВИЛИ ИМПОРТ ВИДЖЕТА
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"], 
@@ -11,7 +12,6 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-// Путь теперь относительно самого layout.tsx
 const evseevGlav = localFont({
   src: "./fonts/EVSEEVGLAV.ttf", 
   variable: "--font-evseev-glav",
@@ -34,6 +34,8 @@ export default function RootLayout({
         <CartProvider>
           <LikeProvider>
             {children}
+            {/* ВИДЖЕТ ПРЕДЗАКАЗА (ДОБАВЛЕН СЮДА) */}
+            <PreorderWidget />
           </LikeProvider>
         </CartProvider>
       </body>

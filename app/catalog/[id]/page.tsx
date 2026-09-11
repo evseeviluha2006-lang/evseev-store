@@ -24,7 +24,7 @@ const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "5 990 ₽",
+    price: "4 990 ₽",
     images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
     description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка. Оформляя предзаказ, ты гарантируешь себе пару из первой лимитированной партии.",
     sizes: ["S", "M", "L", "XL"],
@@ -153,6 +153,7 @@ export default function ProductPage() {
   const params = useParams();
   const id = params?.id as string;
   const product = products.find((p) => p.id === id);
+  
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
