@@ -47,6 +47,7 @@ const products: Product[] = [
     price: "4 500 ₽",
     images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
     description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -55,6 +56,7 @@ const products: Product[] = [
     price: "5 900 ₽",
     images: ["/vlad-ls-front.jpg", "/vlad-ls-full.jpg", "/vlad-ls-full1.jpg"],
     description: "Лонгслив с агрессивным дизайном. Плотный хлопок.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -63,6 +65,7 @@ const products: Product[] = [
     price: "7 500 ₽",
     images: ["/vlad-cape-front.jpg", "/vlad-cape-full.jpg", "/vlad-cape-full1.jpg", "/vlad-cape-full2.jpg"],
     description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -89,6 +92,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/product2.jpg"],
     description: "Укороченный топ с агрессивным принтом. Плотный хлопок.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -97,6 +101,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/18+w-front.jpg", "/18+w-full1.jpg", "/18+w-full2.jpg"],
     description: "Белый топ с красным трафаретным принтом. Оверсайз крой.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -105,6 +110,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/18+-front.jpg", "/18+-full1.jpg", "/18+-full2.jpg", "/18+-full3.jpg"],
     description: "Черный топ с оранжевым принтом. Укороченная длина.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -113,6 +119,7 @@ const products: Product[] = [
     price: "7 990 ₽",
     images: ["/dipa-front.jpg", "/dipa-back.jpg", "/dipa-full.jpg", "/dipa-full2.jpg", "/dipa-glav.jpg"],
     description: "Джинсы с эффектом дистресс из коллекции DIPA.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "dipa"
   },
   {
@@ -121,6 +128,7 @@ const products: Product[] = [
     price: "5 990 ₽",
     images: ["/radioevs-shirt-front.jpg", "/radioevs-shirt-full.jpg", "/radioevs-shirt-full2.jpg", "/radioevs-shirt-full3.jpg", "/radioevs-shirt-full4.jpg", "/radioevs-shirt-full5.jpg"],
     description: "Футболка, созданная по вдохновению группой Radiohead.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "radioevs"
   },
   {
@@ -129,6 +137,7 @@ const products: Product[] = [
     price: "8 490 ₽",
     images: ["/redholes-front.jpg", "/redholes-back.jpg", "/redholes-full.jpg", "/redholes-full2.jpg", "/redholes-full3.jpg"],
     description: "Штаны с огромными дырками на коленях.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "dipa"
   },
   {
@@ -137,6 +146,7 @@ const products: Product[] = [
     price: "18 990 ₽",
     images: ["/krest-jacket-front.jpg", "/krest-jacket-double.jpg", "/krest-jacket-full.jpg"],
     description: "Куртка выполнена по технике сшивания множества маленьких кусочков ткани.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "archive"
   },
   {
@@ -145,6 +155,7 @@ const products: Product[] = [
     price: "14 990 ₽",
     images: ["/psyho-jacket-front.jpg", "/psyho-jacket-full.jpg"],
     description: "Эта куртка выполнена в слим фит.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "archive"
   },
 ];
