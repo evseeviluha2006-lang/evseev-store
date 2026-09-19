@@ -4,7 +4,8 @@ import { useState } from "react";
 // БАЗА ДАННЫХ ТОВАРОВ ДЛЯ КОРЗИНЫ
 // Сюда добавлены hoodie-tvar и school-jeans
 const PRODUCTS_DB: Record<string, { name: string; price: string; image: string }> = {
-  "school-jeans": { name: "SCHOOL JEANS // PRE-ORDER", price: "5 990 ₽", image: "/school_jeans_front.jpg" },
+  "school-jeans": { name: "SCHOOL JEANS // PRE-ORDER", price: "4 990 ₽", image: "/school_jeans_front.jpg" },
+  "sexShirt": { name: "SEX Shirt // BLACK", price: "3 500 ₽", image: "/sex_shirt.jpg" },
   "hoodie-tvar": { name: "TVAR HOODIE // BLACK", price: "5 500 ₽", image: "/tvar-front.jpg" },
   "hat-test-2": { name: "ШАПКА ТЕСТ-2 // GREY", price: "2 000 ₽", image: "/test-front.jpg" },
   "hoodie-spasibo": { name: "ХУДИ СПАСИБО // BLACK", price: "5 000 ₽", image: "/hodie-thanks.jpg" },

@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/_components/Header";
@@ -33,6 +33,24 @@ const products: Product[] = [
     preorderDate: "21 СЕНТЯБРЯ"
   },
   {
+    id: "sexShirt",
+    name: "SEX Shirt // BLACK",
+    price: "3 500 ₽",
+    images: ["/sex_shirt.jpg"],
+    description: "Эксклюзивная Майка, Которую можно приоборести в комплекте с School Jeans.",
+    sizes: ["S", "M", "L", "XL"],
+    collection: "school"
+  },
+  {
+    id: "el-shirt",
+    name: "LOG SHIRT // BLACK",
+    price: "3 500 ₽",
+    images: ["/el_shirt.jpg"],
+    description: "Футболка с логотипом. Доступна только при заказе комплектом с джинсами School Jeans.",
+    sizes: ["S", "M", "L", "XL"],
+    collection: "school"
+  },
+  {
     id: "hoodie-tvar",
     name: "TVAR HOODIE // BLACK",
     price: "5 500 ₽",
@@ -47,6 +65,7 @@ const products: Product[] = [
     price: "4 500 ₽",
     images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
     description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -55,6 +74,7 @@ const products: Product[] = [
     price: "5 900 ₽",
     images: ["/vlad-ls-front.jpg", "/vlad-ls-full.jpg", "/vlad-ls-full1.jpg"],
     description: "Лонгслив с агрессивным дизайном. Плотный хлопок.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -63,6 +83,7 @@ const products: Product[] = [
     price: "7 500 ₽",
     images: ["/vlad-cape-front.jpg", "/vlad-cape-full.jpg", "/vlad-cape-full1.jpg", "/vlad-cape-full2.jpg"],
     description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "vlad"
   },
   {
@@ -89,6 +110,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/product2.jpg"],
     description: "Укороченный топ с агрессивным принтом. Плотный хлопок.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -97,6 +119,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/18+w-front.jpg", "/18+w-full1.jpg", "/18+w-full2.jpg"],
     description: "Белый топ с красным трафаретным принтом. Оверсайз крой.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -105,6 +128,7 @@ const products: Product[] = [
     price: "3 500 ₽",
     images: ["/18+-front.jpg", "/18+-full1.jpg", "/18+-full2.jpg", "/18+-full3.jpg"],
     description: "Черный топ с оранжевым принтом. Укороченная длина.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "18plus"
   },
   {
@@ -113,6 +137,7 @@ const products: Product[] = [
     price: "7 990 ₽",
     images: ["/dipa-front.jpg", "/dipa-back.jpg", "/dipa-full.jpg", "/dipa-full2.jpg", "/dipa-glav.jpg"],
     description: "Джинсы с эффектом дистресс из коллекции DIPA.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "dipa"
   },
   {
@@ -121,6 +146,7 @@ const products: Product[] = [
     price: "5 990 ₽",
     images: ["/radioevs-shirt-front.jpg", "/radioevs-shirt-full.jpg", "/radioevs-shirt-full2.jpg", "/radioevs-shirt-full3.jpg", "/radioevs-shirt-full4.jpg", "/radioevs-shirt-full5.jpg"],
     description: "Футболка, созданная по вдохновению группой Radiohead.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "radioevs"
   },
   {
@@ -129,6 +155,7 @@ const products: Product[] = [
     price: "8 490 ₽",
     images: ["/redholes-front.jpg", "/redholes-back.jpg", "/redholes-full.jpg", "/redholes-full2.jpg", "/redholes-full3.jpg"],
     description: "Штаны с огромными дырками на коленях.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "dipa"
   },
   {
@@ -137,6 +164,7 @@ const products: Product[] = [
     price: "18 990 ₽",
     images: ["/krest-jacket-front.jpg", "/krest-jacket-double.jpg", "/krest-jacket-full.jpg"],
     description: "Куртка выполнена по технике сшивания множества маленьких кусочков ткани.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "archive"
   },
   {
@@ -145,12 +173,14 @@ const products: Product[] = [
     price: "14 990 ₽",
     images: ["/psyho-jacket-front.jpg", "/psyho-jacket-full.jpg"],
     description: "Эта куртка выполнена в слим фит.",
+    sizes: ["S", "M", "L", "XL"],
     collection: "archive"
   },
 ];
 
 export default function ProductPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params?.id as string;
   const product = products.find((p) => p.id === id);
   
@@ -194,6 +224,9 @@ export default function ProductPage() {
   };
 
   const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
+
+  // Проверка, является ли текущий товар школьными джинсами
+  const isSchoolJeans = product.id === "school-jeans";
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
@@ -367,7 +400,7 @@ export default function ProductPage() {
              </div>
           )}
 
-          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА (ИСПРАВЛЕНО) */}
+          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА */}
           <div className="mb-4">
              {!selectedSize ? (
                 <>
@@ -397,6 +430,81 @@ export default function ProductPage() {
           </div>
         </div>
       </div>
+
+      {/* СПЕЦИАЛЬНАЯ СЕКЦИЯ ДЛЯ SCHOOL JEANS (ГАЛЕРЕЯ LOOKBOOK) */}
+      {isSchoolJeans && (
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-24 border-t border-white/10 mt-12">
+          <div className="mb-12 text-center">
+            <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-2">School Jeans Lookbook</h2>
+            <p className="text-zinc-500 text-xs font-mono uppercase tracking-[4px]">Complete The Set</p>
+          </div>
+
+          {/* ГЛАВНОЕ ФОТО (ДЖИНСЫ НА МОДЕЛИ) */}
+          <div className="w-full mb-16 relative group cursor-pointer" onClick={() => router.push('/catalog/school-jeans')}>
+            <div className="relative aspect-[4/5] md:aspect-[16/9] w-full bg-zinc-900 overflow-hidden border border-white/10">
+              <Image 
+                src="/shool_jeans_glav.jpg" 
+                alt="School Jeans Full Look" 
+                fill 
+                className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
+              />
+              <div className="absolute bottom-6 left-6 bg-black/80 backdrop-blur px-4 py-2 border-l-2 border-white">
+                <p className="text-white font-bold uppercase tracking-widest text-sm">Full Set Look</p>
+                <p className="text-zinc-400 text-[10px] uppercase">School Jeans Original</p>
+              </div>
+            </div>
+          </div>
+
+          {/* ХАОТИЧНЫЕ ФОТО ФУТБОЛОК */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
+            
+            {/* SEX SHIRT */}
+            <div className="relative group cursor-pointer md:translate-y-12" onClick={() => router.push('/catalog/sexShirt')}>
+              <div className="relative aspect-[3/4] w-full max-w-md mx-auto bg-zinc-900 overflow-hidden border border-white/10 rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
+                <Image 
+                  src="/sex_shirt.jpg" 
+                  alt="Sex Shirt" 
+                  fill 
+                  className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="text-white border border-white px-4 py-2 text-xs font-bold uppercase tracking-widest">View Item</span>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-lg font-bold uppercase tracking-wide text-white">Sex Shirt // Black</h3>
+                <p className="text-[10px] text-red-400 font-mono uppercase mt-1 tracking-wider">
+                  * Доступно только в комплекте с джинсами
+                </p>
+                <p className="text-zinc-500 text-xs font-mono mt-1">3 500 ₽</p>
+              </div>
+            </div>
+
+            {/* LOG SHIRT (EL SHIRT) */}
+            <div className="relative group cursor-pointer md:-translate-y-12" onClick={() => router.push('/catalog/el-shirt')}>
+              <div className="relative aspect-[3/4] w-full max-w-md mx-auto bg-zinc-900 overflow-hidden border border-white/10 rotate-[2deg] hover:rotate-0 transition-transform duration-500">
+                <Image 
+                  src="/el_shirt.jpg" 
+                  alt="Log Shirt" 
+                  fill 
+                  className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span className="text-white border border-white px-4 py-2 text-xs font-bold uppercase tracking-widest">View Item</span>
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-lg font-bold uppercase tracking-wide text-white">Log Shirt // Black</h3>
+                <p className="text-[10px] text-red-400 font-mono uppercase mt-1 tracking-wider">
+                  * Доступно только в комплекте с джинсами
+                </p>
+                <p className="text-zinc-500 text-xs font-mono mt-1">3 500 ₽</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* ПОХОЖИЕ ТОВАРЫ */}
       {relatedProducts.length > 0 && (
