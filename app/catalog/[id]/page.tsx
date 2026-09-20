@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Header from "@/_components/Header";
@@ -35,18 +35,18 @@ const products: Product[] = [
   {
     id: "sexShirt",
     name: "SEX Shirt // BLACK",
-    price: "3 500 ₽",
+    price: "3 500₽",
     images: ["/sex_shirt.jpg"],
-    description: "Эксклюзивная Майка, Которую можно приоборести в комплекте с School Jeans.",
+    description: "Эксклюзивная Майка, Которую можно приоборести в комплекте с Shool jeans.",
     sizes: ["S", "M", "L", "XL"],
-    collection: "school"
+    collection: "tvar"
   },
   {
-    id: "el-shirt",
+    id: "el-shirt", // НОВЫЙ ТОВАР
     name: "LOG SHIRT // BLACK",
     price: "3 500 ₽",
     images: ["/el_shirt.jpg"],
-    description: "Футболка с логотипом. Доступна только при заказе комплектом с джинсами School Jeans.",
+    description: "Футболка с логотипом. Доступна только в комплекте с джинсами SCHOOL JEANS.",
     sizes: ["S", "M", "L", "XL"],
     collection: "school"
   },
@@ -180,7 +180,6 @@ const products: Product[] = [
 
 export default function ProductPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params?.id as string;
   const product = products.find((p) => p.id === id);
   
@@ -223,10 +222,13 @@ export default function ProductPage() {
     touchEndX.current = null;
   };
 
-  const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
-
-  // Проверка, является ли текущий товар школьными джинсами
-  const isSchoolJeans = product.id === "school-jeans";
+  // Логика "Похожие товары": берем из той же коллекции, исключая текущий.
+  // Если в коллекции меньше 4 товаров, дополняем любыми другими.
+  let relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id);
+  if (relatedProducts.length < 4) {
+    const others = products.filter(p => p.collection !== product.collection && p.id !== product.id);
+    relatedProducts = [...relatedProducts, ...others].slice(0, 4);
+  }
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
@@ -243,7 +245,6 @@ export default function ProductPage() {
         
         {/* ГАЛЕРЕЯ */}
         <div className="flex gap-4 w-full md:w-auto flex-col md:flex-row">
-          
           {/* Миниатюры */}
           <div className="hidden md:flex flex-col gap-4 w-[80px] flex-shrink-0 order-2 md:order-1">
             {product.images.map((img, idx) => (
@@ -280,7 +281,6 @@ export default function ProductPage() {
               />
             )}
             
-            {/* Плашка на фото */}
             {product.isPreorder && (
               <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm border border-red-500 px-3 py-1 z-20">
                 <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">PRE-ORDER</span>
@@ -362,7 +362,6 @@ export default function ProductPage() {
             {product.description}
           </p>
 
-          {/* БЛОК ИНФОРМАЦИИ О ПРЕДЗАКАЗЕ */}
           {product.isPreorder && (
             <div className="mb-8 p-4 border border-white/10 bg-zinc-900/50 flex items-start gap-3">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -373,7 +372,6 @@ export default function ProductPage() {
             </div>
           )}
           
-          {/* БЛОК ВЫБОРА РАЗМЕРА */}
           {product.sizes && product.sizes.length > 0 && (
              <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
@@ -400,7 +398,6 @@ export default function ProductPage() {
              </div>
           )}
 
-          {/* КНОПКА ОПЛАТЫ С ПРОВЕРКОЙ РАЗМЕРА */}
           <div className="mb-4">
              {!selectedSize ? (
                 <>
@@ -431,112 +428,96 @@ export default function ProductPage() {
         </div>
       </div>
 
-      {/* СПЕЦИАЛЬНАЯ СЕКЦИЯ ДЛЯ SCHOOL JEANS (ГАЛЕРЕЯ LOOKBOOK) */}
-      {isSchoolJeans && (
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-24 border-t border-white/10 mt-12">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-2">School Jeans Lookbook</h2>
-            <p className="text-zinc-500 text-xs font-mono uppercase tracking-[4px]">Complete The Set</p>
+      {/* LOOKBOOK SECTION (ТОЛЬКО ДЛЯ SCHOOL JEANS) */}
+      {product.id === "school-jeans" && (
+        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-24 border-t border-white/10">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">School Jeans Lookbook</h2>
+            <p className="text-zinc-500 font-mono text-sm uppercase tracking-widest">Complete The Set</p>
           </div>
 
-          {/* ГЛАВНОЕ ФОТО (ДЖИНСЫ НА МОДЕЛИ) */}
-          <div className="w-full mb-16 relative group cursor-pointer" onClick={() => router.push('/catalog/school-jeans')}>
-            <div className="relative aspect-[4/5] md:aspect-[16/9] w-full bg-zinc-900 overflow-hidden border border-white/10">
-              <Image 
-                src="/shool_jeans_glav.jpg" 
-                alt="School Jeans Full Look" 
-                fill 
-                className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"
-              />
-              <div className="absolute bottom-6 left-6 bg-black/80 backdrop-blur px-4 py-2 border-l-2 border-white">
-                <p className="text-white font-bold uppercase tracking-widest text-sm">Full Set Look</p>
-                <p className="text-zinc-400 text-[10px] uppercase">School Jeans Original</p>
+          {/* Главная картинка */}
+          <div className="w-full mb-24 relative group">
+            <Link href="/catalog/school-jeans" className="block relative aspect-[3/4] md:aspect-[16/9] w-full bg-zinc-900 overflow-hidden border border-white/10">
+              <Image src="/shool_jeans_glav.jpg" alt="School Jeans Full Look" fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
+              <div className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-black/80 to-transparent">
+                <span className="bg-white text-black px-6 py-2 font-bold uppercase tracking-widest text-sm">Смотреть джинсы</span>
               </div>
-            </div>
+            </Link>
+            <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Full Set Look</p>
           </div>
 
-          {/* ХАОТИЧНЫЕ ФОТО ФУТБОЛОК */}
+          {/* Хаотичные картинки */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            
-            {/* SEX SHIRT */}
-            <div className="relative group cursor-pointer md:translate-y-12" onClick={() => router.push('/catalog/sexShirt')}>
-              <div className="relative aspect-[3/4] w-full max-w-md mx-auto bg-zinc-900 overflow-hidden border border-white/10 rotate-[-2deg] hover:rotate-0 transition-transform duration-500">
-                <Image 
-                  src="/sex_shirt.jpg" 
-                  alt="Sex Shirt" 
-                  fill 
-                  className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white border border-white px-4 py-2 text-xs font-bold uppercase tracking-widest">View Item</span>
+            {/* Sex Shirt */}
+            <div className="relative group md:translate-y-12 md:-rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
+              <Link href="/catalog/sexShirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
+                <Image src="/sex_shirt.jpg" alt="Sex Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
+                  <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Sex Shirt</p>
+                  <p className="text-zinc-300 text-[10px] uppercase tracking-widest mb-3">Только в комплекте</p>
+                  <span className="text-white text-xs font-bold border-b border-white pb-0.5">Купить комплект</span>
                 </div>
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-lg font-bold uppercase tracking-wide text-white">Sex Shirt // Black</h3>
-                <p className="text-[10px] text-red-400 font-mono uppercase mt-1 tracking-wider">
-                  * Доступно только в комплекте с джинсами
-                </p>
-                <p className="text-zinc-500 text-xs font-mono mt-1">3 500 ₽</p>
-              </div>
+              </Link>
+              <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Sex Shirt // Black</p>
             </div>
 
-            {/* LOG SHIRT (EL SHIRT) */}
-            <div className="relative group cursor-pointer md:-translate-y-12" onClick={() => router.push('/catalog/el-shirt')}>
-              <div className="relative aspect-[3/4] w-full max-w-md mx-auto bg-zinc-900 overflow-hidden border border-white/10 rotate-[2deg] hover:rotate-0 transition-transform duration-500">
-                <Image 
-                  src="/el_shirt.jpg" 
-                  alt="Log Shirt" 
-                  fill 
-                  className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="text-white border border-white px-4 py-2 text-xs font-bold uppercase tracking-widest">View Item</span>
+            {/* El Shirt */}
+            <div className="relative group md:-translate-y-12 md:rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
+              <Link href="/catalog/el-shirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
+                <Image src="/el_shirt.jpg" alt="Log Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
+                  <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Log Shirt</p>
+                  <p className="text-zinc-300 text-[10px] uppercase tracking-widest mb-3">Только в комплекте</p>
+                  <span className="text-white text-xs font-bold border-b border-white pb-0.5">Купить комплект</span>
                 </div>
-              </div>
-              <div className="mt-4 text-center">
-                <h3 className="text-lg font-bold uppercase tracking-wide text-white">Log Shirt // Black</h3>
-                <p className="text-[10px] text-red-400 font-mono uppercase mt-1 tracking-wider">
-                  * Доступно только в комплекте с джинсами
-                </p>
-                <p className="text-zinc-500 text-xs font-mono mt-1">3 500 ₽</p>
-              </div>
+              </Link>
+              <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Log Shirt // Black</p>
             </div>
-
           </div>
         </div>
       )}
 
-      {/* ПОХОЖИЕ ТОВАРЫ */}
+      {/* ТАКЖЕ МОЖЕТ ПОНРАВИТЬСЯ (СТАБИЛЬНЫЙ СПИСОК) */}
       {relatedProducts.length > 0 && (
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 mt-12 border-t border-white/10 pt-12">
-          <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-8">
-            Так же из этой коллекции
+          <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-12 text-center">
+            Также может понравиться
           </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {relatedProducts.map((relatedProduct) => (
-              <Link 
-                href={`/catalog/${relatedProduct.id}`} 
-                key={relatedProduct.id}
-                className="group block"
-              >
-                <div className="relative aspect-[3/4] w-full bg-zinc-900 overflow-hidden border border-white/5 mb-3">
-                  {relatedProduct.images[0] && (
-                    <Image 
-                      src={relatedProduct.images[0]} 
-                      alt={relatedProduct.name}
-                      fill
-                      className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
-                    />
-                  )}
+          
+          <div className="relative w-full min-h-[400px] md:min-h-[600px]">
+            {relatedProducts.map((item, index) => {
+              // Стабильные стили для каждого элемента, чтобы не было рассинхрона
+              const styles = [
+                "md:w-[30%] md:left-[10%] md:-rotate-6 md:top-10",
+                "md:w-[30%] md:left-[60%] md:rotate-3 md:top-[-50px]",
+                "md:w-[25%] md:left-[20%] md:rotate-[-10deg] md:top-[100px]",
+                "md:w-[25%] md:left-[70%] md:rotate-6 md:top-[50px]"
+              ];
+              
+              return (
+                <div 
+                  key={item.id}
+                  className={`absolute w-full md:absolute md:h-[400px] transition-all duration-500 hover:z-50 hover:scale-110 hover:rotate-0 ${styles[index % styles.length]}`}
+                >
+                  <Link href={`/catalog/${item.id}`} className="group block relative w-full h-full bg-zinc-900 border border-white/10 overflow-hidden shadow-xl">
+                    {item.images[0] && (
+                      <Image 
+                        src={item.images[0]} 
+                        alt={item.name}
+                        fill
+                        className="object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
+                      />
+                    )}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70 backdrop-blur-sm">
+                      <p className="text-white font-bold uppercase tracking-wider text-sm mb-2">{item.name}</p>
+                      <p className="text-zinc-300 font-mono text-xs mb-4">{item.price}</p>
+                      <span className="text-white text-xs font-bold border-b border-white pb-0.5">Смотреть</span>
+                    </div>
+                  </Link>
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-wide truncate group-hover:text-white text-zinc-400 transition-colors">
-                  {relatedProduct.name}
-                </h4>
-                <p className="text-xs font-mono text-zinc-500 mt-1">
-                  {relatedProduct.price}
-                </p>
-              </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
