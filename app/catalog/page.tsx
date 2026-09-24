@@ -20,6 +20,12 @@ const products: Product[] = [
     isPreorder: true,
   },
   {
+    id: "hat-sex",
+    name: "HAT - SEX",
+    price: "750 ₽",
+    image: "/hat_front.jpg",
+  },
+  {
     id: "hoodie-tvar",
     name: "TVAR HOODIE // BLACK",
     price: "5 500 ₽",

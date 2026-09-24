@@ -12,19 +12,18 @@ export default function SizeGuide() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full mt-6">
-      {/* Кнопка открытия */}
+    <div className="w-full mt-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full py-3 border border-white/20 text-xs font-bold uppercase tracking-[3px] hover:bg-white/5 transition-colors flex items-center justify-between px-4"
+        type="button"
       >
         <span>Размерная сетка</span>
-        <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+        <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>▼</span>
       </button>
 
-      {/* Таблица (раскрывается по клику) */}
       {isOpen && (
-        <div className="border border-t-0 border-white/20 overflow-x-auto">
+        <div className="border border-t-0 border-white/20 overflow-x-auto animate-in fade-in slide-in-from-top-2 duration-200">
           <table className="w-full text-xs text-left">
             <thead>
               <tr className="bg-zinc-900 border-b border-white/10">
@@ -46,7 +45,6 @@ export default function SizeGuide() {
             </tbody>
           </table>
 
-          {/* Подпись под таблицей */}
           <div className="p-4 bg-zinc-900/50 border-t border-white/5">
             <p className="text-[10px] text-zinc-600 uppercase tracking-wider leading-relaxed">
               ПОТ — полуобхват талии. Измерения указаны в сантиметрах. Допускается погрешность ±1 см.

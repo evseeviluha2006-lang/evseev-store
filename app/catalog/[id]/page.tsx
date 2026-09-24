@@ -18,31 +18,42 @@ type Product = {
   collection?: string;
   isPreorder?: boolean;
   preorderDate?: string;
+  hideSizeGuide?: boolean; // <-- ДОБАВИЛИ ПОЛЕ ДЛЯ СКРЫТИЯ ТАБЛИЦЫ
 };
 
 const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "4 990 ₽",
+    price: "5 990 ₽", // ИСПРАВИЛ ЦЕНУ ОБРАТНО НА 5990
     images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
-    description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка. Оформляя предзаказ, ты гарантируешь себе пару из первой лимитированной партии.",
+    description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка.",
     sizes: ["S", "M", "L", "XL"],
     collection: "school",
     isPreorder: true,
     preorderDate: "21 СЕНТЯБРЯ"
   },
   {
-    id: "sexShirt",
+    id: "sex-shirt",
     name: "SEX Shirt // BLACK",
-    price: "3 500₽",
+    price: "3 500 ₽",
     images: ["/sex_shirt.jpg"],
-    description: "Эксклюзивная Майка, Которую можно приоборести в комплекте с Shool jeans.",
+    description: "Эксклюзивная майка. Доступна только при заказе комплектом с School Jeans.",
     sizes: ["S", "M", "L", "XL"],
-    collection: "tvar"
+    collection: "school"
   },
   {
-    id: "el-shirt", // НОВЫЙ ТОВАР
+    id: "hat-sex",
+    name: "HAT - SEX",
+    price: "750 ₽",
+    images: ["/hat_front.jpg", "/hat_glav.jpg"],
+    description: "Очень теплая шапка. Плотная вязка, не продувает.",
+    sizes: ["S", "M"],
+    collection: "accessories",
+    hideSizeGuide: true // <-- ТАБЛИЦА РАЗМЕРОВ БУДЕТ СКРЫТА
+  },
+  {
+    id: "el-shirt",
     name: "LOG SHIRT // BLACK",
     price: "3 500 ₽",
     images: ["/el_shirt.jpg"],
@@ -100,7 +111,7 @@ const products: Product[] = [
     name: "ХУДИ СПАСИБО // BLACK",
     price: "5 000 ₽",
     images: ["/hodie-thanks.jpg"],
-    description: "Довольно давняя работа. Сделал базовый худак для повседневной носки. Принт спереди: thanks. Размер только один — L (по сетке оверсайз).",
+    description: "Довольно давняя работа. Сделал базовый худак для повседневной носки.",
     sizes: ["L"],
     collection: "archive"
   },
@@ -222,13 +233,7 @@ export default function ProductPage() {
     touchEndX.current = null;
   };
 
-  // Логика "Похожие товары": берем из той же коллекции, исключая текущий.
-  // Если в коллекции меньше 4 товаров, дополняем любыми другими.
-  let relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id);
-  if (relatedProducts.length < 4) {
-    const others = products.filter(p => p.collection !== product.collection && p.id !== product.id);
-    relatedProducts = [...relatedProducts, ...others].slice(0, 4);
-  }
+  const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
 
   return (
     <main className="min-h-screen bg-black text-white flex flex-col">
@@ -245,7 +250,6 @@ export default function ProductPage() {
         
         {/* ГАЛЕРЕЯ */}
         <div className="flex gap-4 w-full md:w-auto flex-col md:flex-row">
-          {/* Миниатюры */}
           <div className="hidden md:flex flex-col gap-4 w-[80px] flex-shrink-0 order-2 md:order-1">
             {product.images.map((img, idx) => (
               <button
@@ -262,7 +266,6 @@ export default function ProductPage() {
             ))}
           </div>
 
-          {/* Основное фото */}
           <div 
             className={`relative w-full md:w-[600px] min-h-[400px] md:min-h-[600px] bg-zinc-900 overflow-hidden border group flex items-center justify-center order-1 md:order-2 select-none ${product.isPreorder ? 'border-red-500/50' : 'border-white/10'}`}
             onTouchStart={handleTouchStart}
@@ -299,7 +302,6 @@ export default function ProductPage() {
               />
             </div>
 
-            {/* Индикаторы для мобильных */}
             <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 md:hidden z-20">
                <span className="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
                  {activeImageIndex + 1} / {product.images.length}
@@ -315,7 +317,6 @@ export default function ProductPage() {
               </div>
             </div>
             
-            {/* Стрелки для десктопа */}
             <div className="hidden md:flex absolute inset-y-0 left-0 right-0 justify-between items-center px-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20">
                <button 
                  onClick={() => setActiveImageIndex(Math.max(0, activeImageIndex - 1))}
@@ -335,7 +336,7 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ИНФОРМАЦИЯ И ВЫБОР РАЗМЕРА */}
+        {/* ИНФОРМАЦИЯ */}
         <div className="flex flex-col justify-center h-full py-8 md:py-0 sticky top-24">
           <div className="mb-6 text-[10px] font-mono text-zinc-500 tracking-widest uppercase flex items-center gap-2">
             {product.isPreorder ? (
@@ -367,11 +368,12 @@ export default function ProductPage() {
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
               <div className="text-xs text-zinc-300 leading-relaxed">
                 <p className="font-bold text-white mb-1 uppercase tracking-wide">Внимание: Предзаказ</p>
-                <p>Этот товар производится под заказ. Отправка состоится <span className="text-white font-bold">{product.preorderDate}</span>. Оформляя заказ сейчас, вы бронируете пару из первой партии.</p>
+                <p>Отправка состоится <span className="text-white font-bold">{product.preorderDate}</span>.</p>
               </div>
             </div>
           )}
           
+          {/* БЛОК РАЗМЕРОВ (СКРЫТ ДЛЯ ШАПКИ ЧЕРЕЗ hideSizeGuide) */}
           {product.sizes && product.sizes.length > 0 && (
              <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
@@ -379,7 +381,8 @@ export default function ProductPage() {
                    {!selectedSize && <span className="text-[10px] text-red-500 uppercase tracking-wider">Обязательно</span>}
                 </div>
                 
-                <div className="grid grid-cols-4 gap-2 mb-4">
+                {/* АДАПТИВНАЯ СЕТКА КНОПОК */}
+                <div className={`grid gap-2 mb-4 ${product.sizes.length === 2 ? 'grid-cols-2 max-w-[240px]' : 'grid-cols-4'}`}>
                    {product.sizes.map(size => (
                       <button 
                         key={size} 
@@ -394,10 +397,15 @@ export default function ProductPage() {
                       </button>
                    ))}
                 </div>
-                <SizeGuide />
+
+                {/* ТАБЛИЦА РАЗМЕРОВ (ТОЛЬКО ЕСЛИ НЕ hideSizeGuide) */}
+                {!product.hideSizeGuide && (
+                  <SizeGuide />
+                )}
              </div>
           )}
 
+          {/* КНОПКА */}
           <div className="mb-4">
              {!selectedSize ? (
                 <>
@@ -436,7 +444,6 @@ export default function ProductPage() {
             <p className="text-zinc-500 font-mono text-sm uppercase tracking-widest">Complete The Set</p>
           </div>
 
-          {/* Главная картинка */}
           <div className="w-full mb-24 relative group">
             <Link href="/catalog/school-jeans" className="block relative aspect-[3/4] md:aspect-[16/9] w-full bg-zinc-900 overflow-hidden border border-white/10">
               <Image src="/shool_jeans_glav.jpg" alt="School Jeans Full Look" fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
@@ -447,11 +454,9 @@ export default function ProductPage() {
             <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Full Set Look</p>
           </div>
 
-          {/* Хаотичные картинки */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            {/* Sex Shirt */}
             <div className="relative group md:translate-y-12 md:-rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
-              <Link href="/catalog/sexShirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
+              <Link href="/catalog/sex-shirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
                 <Image src="/sex_shirt.jpg" alt="Sex Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
                   <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Sex Shirt</p>
@@ -462,7 +467,6 @@ export default function ProductPage() {
               <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Sex Shirt // Black</p>
             </div>
 
-            {/* El Shirt */}
             <div className="relative group md:-translate-y-12 md:rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
               <Link href="/catalog/el-shirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
                 <Image src="/el_shirt.jpg" alt="Log Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
@@ -478,46 +482,38 @@ export default function ProductPage() {
         </div>
       )}
 
-      {/* ТАКЖЕ МОЖЕТ ПОНРАВИТЬСЯ (СТАБИЛЬНЫЙ СПИСОК) */}
+      {/* ПОХОЖИЕ ТОВАРЫ */}
       {relatedProducts.length > 0 && (
         <div className="w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 mt-12 border-t border-white/10 pt-12">
           <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-12 text-center">
             Также может понравиться
           </h3>
           
-          <div className="relative w-full min-h-[400px] md:min-h-[600px]">
-            {relatedProducts.map((item, index) => {
-              // Стабильные стили для каждого элемента, чтобы не было рассинхрона
-              const styles = [
-                "md:w-[30%] md:left-[10%] md:-rotate-6 md:top-10",
-                "md:w-[30%] md:left-[60%] md:rotate-3 md:top-[-50px]",
-                "md:w-[25%] md:left-[20%] md:rotate-[-10deg] md:top-[100px]",
-                "md:w-[25%] md:left-[70%] md:rotate-6 md:top-[50px]"
-              ];
-              
-              return (
-                <div 
-                  key={item.id}
-                  className={`absolute w-full md:absolute md:h-[400px] transition-all duration-500 hover:z-50 hover:scale-110 hover:rotate-0 ${styles[index % styles.length]}`}
-                >
-                  <Link href={`/catalog/${item.id}`} className="group block relative w-full h-full bg-zinc-900 border border-white/10 overflow-hidden shadow-xl">
-                    {item.images[0] && (
-                      <Image 
-                        src={item.images[0]} 
-                        alt={item.name}
-                        fill
-                        className="object-cover opacity-60 group-hover:opacity-100 transition-opacity duration-500"
-                      />
-                    )}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/70 backdrop-blur-sm">
-                      <p className="text-white font-bold uppercase tracking-wider text-sm mb-2">{item.name}</p>
-                      <p className="text-zinc-300 font-mono text-xs mb-4">{item.price}</p>
-                      <span className="text-white text-xs font-bold border-b border-white pb-0.5">Смотреть</span>
-                    </div>
-                  </Link>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {relatedProducts.map((item) => (
+              <Link 
+                href={`/catalog/${item.id}`} 
+                key={item.id}
+                className="group block"
+              >
+                <div className="relative aspect-[3/4] w-full bg-zinc-900 overflow-hidden border border-white/5 mb-3">
+                  {item.images[0] && (
+                    <Image 
+                      src={item.images[0]} 
+                      alt={item.name}
+                      fill
+                      className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
+                    />
+                  )}
                 </div>
-              );
-            })}
+                <h4 className="text-xs font-bold uppercase tracking-wide truncate group-hover:text-white text-zinc-400 transition-colors">
+                  {item.name}
+                </h4>
+                <p className="text-xs font-mono text-zinc-500 mt-1">
+                  {item.price}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
       )}
