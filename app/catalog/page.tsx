@@ -8,16 +8,15 @@ type Product = {
   price: string;
   image: string;
   description?: string;
-  isPreorder?: boolean;
 };
 
 const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "4 990 ₽",
+    price: "5 990 ₽", // ИСПРАВИЛ ЦЕНУ ОБРАТНО НА 5990
     image: "/school_jeans_front.jpg",
-    isPreorder: true,
+    // isPreorder УДАЛЕН — теперь обычная кнопка корзины
   },
   {
     id: "hat-sex",
@@ -32,7 +31,7 @@ const products: Product[] = [
     image: "/tvar-front.jpg",
   },
   {
-    id: "sexShirt",
+    id: "sex-shirt", // ИСПРАВИЛ ID (БЫЛО sexShirt)
     name: "SEX Shirt // TEE",
     price: "3 500 ₽",
     image: "/sex_shirt.jpg",
@@ -135,11 +134,7 @@ export default function CatalogPage() {
           {products.map((product) => (
             <Link href={`/catalog/${product.id}`} key={product.id} className="group block">
               <div className="relative aspect-[3/4] w-full bg-zinc-900 overflow-hidden border border-white/5 mb-4">
-                {product.isPreorder && (
-                  <div className="absolute top-3 left-3 z-10 bg-red-600 text-white text-[9px] font-bold px-2 py-1 uppercase tracking-wider animate-pulse">
-                    PRE-ORDER
-                  </div>
-                )}
+                {/* ПЛАШКА PRE-ORDER УДАЛЕНА */}
                 {product.image && (
                   <Image 
                     src={product.image} 
@@ -162,11 +157,7 @@ export default function CatalogPage() {
                   {product.price}
                 </span>
               </div>
-              {product.isPreorder && (
-                 <p className="text-[10px] text-red-500 mt-1 uppercase tracking-wide font-bold">
-                   Drop: Sept 2026
-                 </p>
-              )}
+              {/* ТЕКСТ DROP УДАЛЕН */}
             </Link>
           ))}
         </div>

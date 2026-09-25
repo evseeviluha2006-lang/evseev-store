@@ -18,20 +18,19 @@ type Product = {
   collection?: string;
   isPreorder?: boolean;
   preorderDate?: string;
-  hideSizeGuide?: boolean; // <-- ДОБАВИЛИ ПОЛЕ ДЛЯ СКРЫТИЯ ТАБЛИЦЫ
+  hasSizeGuide?: boolean; // <-- НОВОЕ ПОЛЕ ДЛЯ УПРАВЛЕНИЯ ТАБЛИЦЕЙ
 };
 
 const products: Product[] = [
   {
     id: "school-jeans",
     name: "SCHOOL JEANS",
-    price: "5 990 ₽", // ИСПРАВИЛ ЦЕНУ ОБРАТНО НА 5990
+    price: "5 990 ₽",
     images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
     description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка.",
     sizes: ["S", "M", "L", "XL"],
     collection: "school",
-    isPreorder: true,
-    preorderDate: "21 СЕНТЯБРЯ"
+    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
   },
   {
     id: "sex-shirt",
@@ -42,7 +41,7 @@ const products: Product[] = [
     sizes: ["S", "M", "L", "XL"],
     collection: "school"
   },
-  {
+    {
     id: "hat-sex",
     name: "HAT - SEX",
     price: "750 ₽",
@@ -50,7 +49,7 @@ const products: Product[] = [
     description: "Очень теплая шапка. Плотная вязка, не продувает.",
     sizes: ["S", "M"],
     collection: "accessories",
-    hideSizeGuide: true // <-- ТАБЛИЦА РАЗМЕРОВ БУДЕТ СКРЫТА
+    hasSizeGuide: true // <-- ДОБАВИЛ, ЧТОБЫ ТАБЛИЦА ПОЯВИЛАСЬ
   },
   {
     id: "el-shirt",
@@ -149,7 +148,8 @@ const products: Product[] = [
     images: ["/dipa-front.jpg", "/dipa-back.jpg", "/dipa-full.jpg", "/dipa-full2.jpg", "/dipa-glav.jpg"],
     description: "Джинсы с эффектом дистресс из коллекции DIPA.",
     sizes: ["S", "M", "L", "XL"],
-    collection: "dipa"
+    collection: "dipa",
+    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
   },
   {
     id: "radioevs-shirt",
@@ -167,7 +167,8 @@ const products: Product[] = [
     images: ["/redholes-front.jpg", "/redholes-back.jpg", "/redholes-full.jpg", "/redholes-full2.jpg", "/redholes-full3.jpg"],
     description: "Штаны с огромными дырками на коленях.",
     sizes: ["S", "M", "L", "XL"],
-    collection: "dipa"
+    collection: "dipa",
+    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
   },
   {
     id: "krest-jacket",
@@ -239,7 +240,7 @@ export default function ProductPage() {
     <main className="min-h-screen bg-black text-white flex flex-col">
       <Header />
       
-      {/* БАННЕР ПРЕДЗАКАЗА */}
+      {/* БАННЕР ПРЕДЗАКАЗА (АВТОМАТИЧЕСКИ СКРЫТ, Т.К. У ДЖИНСОВ НЕТ isPreorder) */}
       {product.isPreorder && (
         <div className="w-full bg-red-600 text-white text-center py-2 text-xs font-bold tracking-[4px] uppercase animate-pulse">
           LIMITED PRE-ORDER // ОТПРАВКА {product.preorderDate}
@@ -373,7 +374,7 @@ export default function ProductPage() {
             </div>
           )}
           
-          {/* БЛОК РАЗМЕРОВ (СКРЫТ ДЛЯ ШАПКИ ЧЕРЕЗ hideSizeGuide) */}
+                   {/* БЛОК РАЗМЕРОВ */}
           {product.sizes && product.sizes.length > 0 && (
              <div className="mb-8">
                 <div className="flex justify-between items-center mb-3">
@@ -398,13 +399,42 @@ export default function ProductPage() {
                    ))}
                 </div>
 
-                {/* ТАБЛИЦА РАЗМЕРОВ (ТОЛЬКО ЕСЛИ НЕ hideSizeGuide) */}
-                {!product.hideSizeGuide && (
-                  <SizeGuide />
+                {/* ТАБЛИЦА РАЗМЕРОВ */}
+                {product.hasSizeGuide && (
+                  product.id === "hat-sex" ? (
+                    // СПЕЦИАЛЬНАЯ ТАБЛИЦА ДЛЯ ШАПКИ
+                    <div className="mt-4 border border-white/20 overflow-x-auto">
+                      <table className="w-full text-xs text-left">
+                        <thead>
+                          <tr className="bg-zinc-900 border-b border-white/10">
+                            <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Размер</th>
+                            <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Обхват головы (см)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td className="py-3 px-4 font-bold font-mono">S</td>
+                            <td className="py-3 px-4 font-mono text-zinc-400">54–56</td>
+                          </tr>
+                          <tr className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                            <td className="py-3 px-4 font-bold font-mono">M</td>
+                            <td className="py-3 px-4 font-mono text-zinc-400">56–58</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                      <div className="p-4 bg-zinc-900/50 border-t border-white/5">
+                        <p className="text-[10px] text-zinc-600 uppercase tracking-wider leading-relaxed">
+                          Измерения указаны в сантиметрах. Допускается погрешность ±1 см.
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    // ОБЫЧНАЯ ТАБЛИЦА ДЛЯ ДЖИНСОВ
+                    <SizeGuide />
+                  )
                 )}
              </div>
           )}
-
           {/* КНОПКА */}
           <div className="mb-4">
              {!selectedSize ? (

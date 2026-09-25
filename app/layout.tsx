@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { CartProvider } from "@/_components/CartContext";
 import { LikeProvider } from "@/_components/LikeContext";
-import PreorderWidget from "@/_components/PreorderWidget"; // <-- ДОБАВИЛИ ИМПОРТ ВИДЖЕТА
+// ИМПОРТ PreorderWidget УДАЛЕН
 
 const spaceGrotesk = Space_Grotesk({ 
   subsets: ["latin"], 
@@ -34,8 +34,7 @@ export default function RootLayout({
         <CartProvider>
           <LikeProvider>
             {children}
-            {/* ВИДЖЕТ ПРЕДЗАКАЗА (ДОБАВЛЕН СЮДА) */}
-            <PreorderWidget />
+            {/* КОМПОНЕНТ PreorderWidget УДАЛЕН */}
           </LikeProvider>
         </CartProvider>
       </body>
