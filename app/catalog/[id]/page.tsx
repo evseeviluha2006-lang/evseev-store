@@ -202,7 +202,13 @@ export default function ProductPage() {
                 </div>
                 
                 {/* АДАПТИВНАЯ СЕТКА КНОПОК */}
-                <div className={`grid gap-2 mb-4 ${product.sizes.length === 2 ? 'grid-cols-2 max-w-[240px]' : 'grid-cols-4'}`}>
+                <div className={`grid gap-2 mb-4 ${
+                  product.sizes.length === 1
+                    ? 'grid-cols-1 max-w-[120px]'
+                    : product.sizes.length === 2
+                      ? 'grid-cols-2 max-w-[240px]'
+                      : 'grid-cols-4'
+                }`}>
                    {product.sizes.map(size => (
                       <button 
                         key={size} 

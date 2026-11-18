@@ -134,7 +134,11 @@ export async function POST(request: Request) {
 
     if (!shopId || !secretKey) {
       console.error("Нет ключей ЮKassa в env (YOOKASSA_SHOP_ID / YOOKASSA_SECRET_KEY)");
-      return fail("Ошибка конфигурации сервера", 500);
+      // Пользователю не показываем техническую формулировку — она пугает.
+      return fail(
+        "Оплата временно недоступна. Напишите нам в Telegram — оформим заказ вручную.",
+        503
+      );
     }
 
     const origin =

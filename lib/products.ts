@@ -33,19 +33,19 @@ export const MAX_QUANTITY = 10;
 
 export const products: Product[] = [
   {
-    id: "burgziper",
-    name: "BURGZIPER",
+    id: "burgenzipper",
+    name: "BURGENZIPPER",
     price: 6490,
     images: [
-      "/burgziper-front.jpg",
-      "/burgziper-back.jpg",
-      "/burgziper-open.jpg",
-      "/burgziper-detail.jpg",
+      "/burgenzipper-front.jpg",
+      "/burgenzipper-back.jpg",
+      "/burgenzipper-open.jpg",
+      "/burgenzipper-detail.jpg",
     ],
     description:
       "Зип-худи из плотного футера. Свободный крой, капюшон с регулировкой, металлический зип.",
     material: "ФУТЕР 2 НИТКА С НАЧЁСОМ",
-    sizes: ["S", "M", "L", "XL"],
+    sizes: ["L"],
     collection: "archive",
   },
   {
@@ -260,8 +260,14 @@ export const products: Product[] = [
   },
 ];
 
+/** Старые id товаров, которые могли остаться в корзинах пользователей. */
+const LEGACY_IDS: Record<string, string> = {
+  burgziper: "burgenzipper",
+};
+
 export function getProduct(id: string): Product | undefined {
-  return products.find((product) => product.id === id);
+  const normalized = LEGACY_IDS[id] ?? id;
+  return products.find((product) => product.id === normalized);
 }
 
 /** Детерминированное форматирование цены (одинаково на сервере и клиенте) */
