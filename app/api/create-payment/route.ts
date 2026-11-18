@@ -136,7 +136,7 @@ export async function POST(request: Request) {
       console.error("Нет ключей ЮKassa в env (YOOKASSA_SHOP_ID / YOOKASSA_SECRET_KEY)");
       // Пользователю не показываем техническую формулировку — она пугает.
       return fail(
-        "Оплата временно недоступна. Напишите нам в Telegram — оформим заказ вручную.",
+        "Оплата временно недоступна. Напишите в Telegram @evs_clo — оформим заказ вручную.",
         503
       );
     }
