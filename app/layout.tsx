@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
-import { CartProvider } from "@/_components/CartContext";
-import { LikeProvider } from "@/_components/LikeContext";
 // ИМПОРТ PreorderWidget УДАЛЕН
 
 const spaceGrotesk = Space_Grotesk({ 
@@ -31,12 +29,7 @@ export default function RootLayout({
   return (
     <html lang="ru">
       <body className={`${spaceGrotesk.variable} ${evseevGlav.variable} font-sans antialiased bg-black text-white`}>
-        <CartProvider>
-          <LikeProvider>
-            {children}
-            {/* КОМПОНЕНТ PreorderWidget УДАЛЕН */}
-          </LikeProvider>
-        </CartProvider>
+        {children}
       </body>
     </html>
   );

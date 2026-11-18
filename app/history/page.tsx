@@ -14,7 +14,7 @@ const eras = [
     id: "first-show",
     title: "ПЕРВЫЙ ПОКАЗ // BREAKTHROUGH",
     date: "2022",
-    cover: "/history/era-first-show-cover.jpg",
+    cover: "/distress-cover.jpg",
     description: "Постановка первого показа мод. Активные знакомства в Калининграде, поступление на конструктора-модельера. Защита двух дипломных работ с отличием.",
     items: [] as { type: string; src: string; caption: string }[]
   },
@@ -30,7 +30,7 @@ const eras = [
     id: "new-paths",
     title: "НОВЫЕ ПУТИ // EVOLUTION",
     date: "2024",
-    cover: "/history/era-new-paths-cover.jpg",
+    cover: "/winter26-cover.jpg",
     description: "Поиск новых путей развития. Эксперименты с формами, материалами и подачей. Начало работы над коллекциями DISTRESSED и WINTER 2.6.",
     items: [] as { type: string; src: string; caption: string }[]
   }

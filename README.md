@@ -29,8 +29,46 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Деплой на Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Сайт собирается на Vercel (Next.js определяется автоматически). Два способа:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 1. Через GitHub (рекомендуется)
+
+1. Запушить изменения в `main`:
+
+```bash
+git add .
+git commit -m "update"
+git push
+```
+
+2. В [Vercel Dashboard](https://vercel.com/new) импортировать репозиторий
+   `evseeviluha2006-lang/evseev-store` — после этого каждый пуш в `main`
+   автоматически собирается и публикуется.
+
+### 2. Через VS Code / CLI
+
+`Ctrl+Shift+P` → **Tasks: Run Task** → по очереди:
+
+- `Vercel: login` — вход в аккаунт (откроется браузер);
+- `Vercel: link project` — привязать папку к проекту;
+- `Vercel: deploy production` — сборка и публикация.
+
+Команды также лежат в `.vscode/tasks.json`.
+
+### Переменные окружения
+
+Секреты не хранятся в репозитории. На Vercel их нужно добавить в
+**Project → Settings → Environment Variables** (или взять локально командой
+`Vercel: pull env to .env.local`). Список переменных — в `.env.example`:
+ЮKassa, Telegram-бот и `NEXT_PUBLIC_SITE_URL`.
+
+### Домен
+
+В Vercel: **Project → Settings → Domains → Add** — указать `evseev.store`
+и при необходимости `www.evseev.store`, затем прописать DNS-записи,
+которые покажет Vercel.
+
+Проверить сборку локально перед деплоем: `npm run build`.
+

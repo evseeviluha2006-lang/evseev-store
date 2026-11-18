@@ -1,10 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Header from "@/_components/Header";
-import { sendToTelegram } from "@/lib/telegram"; // Убедись, что импорт правильный
 
-const modules = [
+type Module = {
+  id: string;
+  level: string;
+  title: string;
+  price: string;
+  bgImage: string;
+  description: string;
+  extras: string[];
+};
+
+const modules: Module[] = [
   {
     id: "module-1", level: "БАЗОВЫЙ УРОВЕНЬ", title: "СУМКА / РЮКЗАК", price: "5 500 ₽",
     bgImage: "/education-1.jpg",
@@ -32,7 +42,7 @@ const modules = [
 ];
 
 export default function EducationPage() {
-  const [selectedModule, setSelectedModule] = useState<any>(null);
+  const [selectedModule, setSelectedModule] = useState<Module | null>(null);
   const [formData, setFormData] = useState({ name: "", tg: "", phone: "" });
   const [isSending, setIsSending] = useState(false);
 
@@ -47,30 +57,32 @@ export default function EducationPage() {
 
     setIsSending(true);
 
-    // Формируем сообщение
-    const message = `
-🔥 <b>НОВАЯ ЗАПИСЬ НА КУРС!</b>
+    try {
+      // Токен бота живёт только на сервере (app/api/lead)
+      const response = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: formData.name,
+          tg: formData.tg,
+          phone: formData.phone,
+          module: selectedModule.title,
+          price: selectedModule.price,
+        }),
+      });
 
-📚 <b>Модуль:</b> ${selectedModule.title}
-💰 <b>Цена:</b> ${selectedModule.price}
-
- <b>Имя:</b> ${formData.name}
-✈️ <b>TG:</b> ${formData.tg}
-📞 <b>Тел:</b> ${formData.phone}
-    `.trim();
-
-    console.log("Отправляем в Telegram:", message); // Для отладки
-
-    const success = await sendToTelegram(message);
-
-    if (success) {
-      alert("Заявка успешно отправлена! Я свяжусь с тобой.");
-      closeModal();
-    } else {
+      if (response.ok) {
+        alert("Заявка успешно отправлена! Я свяжусь с тобой.");
+        closeModal();
+      } else {
+        alert("Ошибка отправки. Попробуй написать мне напрямую в Telegram.");
+      }
+    } catch (error) {
+      console.error("Ошибка отправки заявки:", error);
       alert("Ошибка отправки. Попробуй написать мне напрямую в Telegram.");
+    } finally {
+      setIsSending(false);
     }
-    
-    setIsSending(false);
   };
 
   return (
@@ -84,32 +96,44 @@ export default function EducationPage() {
 
       <div className="flex-grow px-6 py-12 max-w-6xl mx-auto w-full space-y-12">
         {modules.map((mod, index) => (
-          <div key={mod.id} className="group relative w-full h-[500px] md:h-[600px] overflow-hidden border border-white/20 bg-white">
+          <div key={mod.id} className="group relative w-full min-h-[500px] md:min-h-[600px] overflow-hidden border border-white/20 bg-white">
             <div className="absolute inset-0 z-0">
-              <img src={mod.bgImage} alt={mod.title} className="w-full h-full object-cover" />
+              <Image
+                src={mod.bgImage}
+                alt={mod.title}
+                fill
+                sizes="(max-width: 768px) 100vw, 1152px"
+                priority={index === 0}
+                className="object-cover"
+              />
             </div>
-            <div className="relative z-10 p-8 md:p-12 h-full flex flex-col justify-between items-start">
-              <div className="max-w-2xl">
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="px-3 py-1 bg-black text-white text-xs font-bold uppercase tracking-widest border border-white">Модуль {index + 1}</span>
-                  <span className="text-xs font-mono text-black font-bold uppercase tracking-widest bg-white/90 px-2 py-1">{mod.level}</span>
-                </div>
-                <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter mb-6 text-black leading-[0.9] drop-shadow-sm">{mod.title}</h2>
-                <p className="text-black text-lg md:text-xl font-bold leading-tight mb-6 max-w-xl drop-shadow-sm">{mod.description}</p>
-                {mod.extras.length > 0 && (
-                  <div className="space-y-2 border-t-2 border-black pt-4 inline-block bg-white/80 p-4 backdrop-blur-sm">
-                    {mod.extras.map((extra, i) => (
-                      <p key={i} className="text-sm font-mono text-black font-bold flex items-start gap-2"><span className="text-xl leading-none">+</span> {extra}</p>
-                    ))}
+            <div className="relative z-10 p-6 md:p-12 min-h-[500px] md:min-h-[600px] flex flex-col justify-between items-start gap-8">
+              <div className="max-w-2xl w-full relative">
+                <div className="absolute -inset-3 bg-white/80 backdrop-blur-[2px] md:hidden" aria-hidden />
+                <div className="relative">
+                  <div className="flex flex-wrap items-center gap-3 md:gap-4 mb-6">
+                    <span className="px-3 py-1 bg-black text-white text-xs font-bold uppercase tracking-widest border border-white">Модуль {index + 1}</span>
+                    <span className="text-[10px] md:text-xs font-mono text-black font-bold uppercase tracking-widest bg-white/90 px-2 py-1">{mod.level}</span>
                   </div>
-                )}
-              </div>
-              <div className="w-full flex flex-col md:flex-row items-end md:items-center justify-between gap-6 mt-auto">
-                <div className="bg-white/90 p-4 backdrop-blur-sm border border-black">
-                  <p className="text-[10px] text-black uppercase tracking-widest mb-1 font-bold">Стоимость</p>
-                  <p className="text-4xl font-black font-numbers text-black">{mod.price}</p>
+                  <h2 className="text-3xl md:text-6xl font-black uppercase tracking-tighter mb-4 md:mb-6 text-black leading-[0.9] drop-shadow-sm break-words">
+                    {mod.title.replace("КОНСТРУИРОВАНИЕ", "КОНСТРУИ\u00ADРОВАНИЕ")}
+                  </h2>
+                  <p className="text-black text-base md:text-xl font-bold leading-tight mb-6 max-w-xl drop-shadow-sm">{mod.description}</p>
+                  {mod.extras.length > 0 && (
+                    <div className="space-y-2 border-t-2 border-black pt-4 inline-block bg-white/80 p-4 backdrop-blur-sm">
+                      {mod.extras.map((extra, i) => (
+                        <p key={i} className="text-sm font-mono text-black font-bold flex items-start gap-2"><span className="text-xl leading-none">+</span> {extra}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <button onClick={() => setSelectedModule(mod)} className="px-10 py-4 bg-black text-white text-sm font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-xl hover:scale-105 transform duration-200">Записаться →</button>
+              </div>
+              <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 md:gap-6 mt-auto">
+                <div className="bg-white/90 p-3 md:p-4 backdrop-blur-sm border border-black">
+                  <p className="text-[10px] text-black uppercase tracking-widest mb-1 font-bold">Стоимость</p>
+                  <p className="text-3xl md:text-4xl font-black font-numbers text-black">{mod.price}</p>
+                </div>
+                <button onClick={() => setSelectedModule(mod)} className="px-8 md:px-10 py-4 bg-black text-white text-sm font-bold uppercase tracking-widest hover:bg-zinc-800 transition-colors shadow-xl hover:scale-105 transform duration-200">Записаться →</button>
               </div>
             </div>
           </div>
@@ -133,7 +157,7 @@ export default function EducationPage() {
           <div className="bg-white border-2 border-black w-full max-w-md p-8 relative shadow-2xl text-black">
             <button onClick={closeModal} className="absolute top-4 right-4 text-black hover:text-red-600 font-bold text-xl">×</button>
             <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Запись на курс</h3>
-            <p className="text-sm font-mono text-zinc-600 mb-6 font-bold">{selectedModule.title} // {selectedModule.price}</p>
+            <p className="text-sm font-mono text-zinc-600 mb-6 font-bold">{selectedModule.title} · {selectedModule.price}</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <input 

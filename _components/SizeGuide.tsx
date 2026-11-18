@@ -23,7 +23,7 @@ export default function SizeGuide() {
       </button>
 
       {isOpen && (
-        <div className="border border-t-0 border-white/20 overflow-x-auto animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="border border-t-0 border-white/20 overflow-x-auto">
           <table className="w-full text-xs text-left">
             <thead>
               <tr className="bg-zinc-900 border-b border-white/10">

@@ -4,20 +4,23 @@ import Header from "@/_components/Header";
 
 export default function Home() {
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-black text-white flex flex-col">
+    <main className="relative h-[100svh] w-full overflow-hidden bg-black text-white flex flex-col">
       
       {/* ШАПКА */}
       <Header />
 
       {/* ФОН С АНИМАЦИЕЙ */}
-      <div className="absolute inset-0 animate-hero-zoom will-change-transform z-0">
-        <Image
-          src="/hero.jpg"
-          alt="EVSEEV Campaign"
-          fill
-          priority
-          className="object-cover brightness-75"
-        />
+      <div className="absolute inset-0 z-0 flex items-center justify-center overflow-hidden animate-hero-zoom will-change-transform">
+        <div className="relative w-[240vw] aspect-[3/2] shrink-0 md:aspect-auto md:h-full md:w-full">
+          <Image
+            src="/hero.jpg"
+            alt="EVSEEV Campaign"
+            fill
+            priority
+            sizes="(max-width: 767px) 240vw, 100vw"
+            className="object-cover brightness-75"
+          />
+        </div>
         <div className="absolute inset-0 bg-black/20" />
       </div>
 

@@ -15,7 +15,7 @@ export default function CreativityPage() {
         
         <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
            <Image 
-             src="/creativity-cover.jpg" 
+             src="/distress-cover.jpg" 
              alt="Art Cover" 
              fill 
              className="object-cover grayscale blur-sm" 

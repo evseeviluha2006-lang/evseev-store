@@ -1,5 +1,5 @@
 "use client";
-import { useLikes } from "./LikeContext";
+import { toggleLikedItem, useLikedItems } from "@/lib/likes";
 
 type Props = {
   id: string;
@@ -12,11 +12,11 @@ type Props = {
 };
 
 export default function LikeButton({ id, type, title, image, price, description, size = "md" }: Props) {
-  const { toggleLike, isLiked } = useLikes();
-  const liked = isLiked(id);
+  const likedItems = useLikedItems();
+  const liked = likedItems.some((item) => item.id === id);
 
   const handleClick = () => {
-    toggleLike({ id, type, title, image, price, description });
+    toggleLikedItem({ id, type, title, image, price, description });
   };
 
   const sizeClasses = size === "sm" ? "w-8 h-8" : "w-10 h-10";

@@ -7,188 +7,7 @@ import Header from "@/_components/Header";
 import AddToCartButton from "@/_components/AddToCartButton";
 import LikeButton from "@/_components/LikeButton";
 import SizeGuide from "@/_components/SizeGuide";
-
-type Product = {
-  id: string;
-  name: string;
-  price: string;
-  images: string[];
-  description: string;
-  sizes?: string[];
-  collection?: string;
-  isPreorder?: boolean;
-  preorderDate?: string;
-  hasSizeGuide?: boolean; // <-- НОВОЕ ПОЛЕ ДЛЯ УПРАВЛЕНИЯ ТАБЛИЦЕЙ
-};
-
-const products: Product[] = [
-  {
-    id: "school-jeans",
-    name: "SCHOOL JEANS",
-    price: "5 990 ₽",
-    images: ["/school_jeans_front.jpg", "/school_jeans_back.jpg"],
-    description: "Джинсы, созданные специально к началу учебного года. Плотный деним, прямой крой, идеальная посадка.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "school",
-    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
-  },
-  {
-    id: "sex-shirt",
-    name: "SEX Shirt // BLACK",
-    price: "3 500 ₽",
-    images: ["/sex_shirt.jpg"],
-    description: "Эксклюзивная майка. Доступна только при заказе комплектом с School Jeans.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "school"
-  },
-    {
-    id: "hat-sex",
-    name: "HAT - SEX",
-    price: "750 ₽",
-    images: ["/hat_front.jpg", "/hat_glav.jpg"],
-    description: "Очень теплая шапка. Плотная вязка, не продувает.",
-    sizes: ["S", "M"],
-    collection: "accessories",
-    hasSizeGuide: true // <-- ДОБАВИЛ, ЧТОБЫ ТАБЛИЦА ПОЯВИЛАСЬ
-  },
-  {
-    id: "el-shirt",
-    name: "LOG SHIRT // BLACK",
-    price: "3 500 ₽",
-    images: ["/el_shirt.jpg"],
-    description: "Футболка с логотипом. Доступна только в комплекте с джинсами SCHOOL JEANS.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "school"
-  },
-  {
-    id: "hoodie-tvar",
-    name: "TVAR HOODIE // BLACK",
-    price: "5 500 ₽",
-    images: ["/tvar-front.jpg", "/tvar-glav.jpg"],
-    description: "Новый худи из коллекции TVAR. Плотный хлопок, агрессивный крой.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "tvar"
-  },
-  {
-    id: "vlad-tee",
-    name: "VLAD DROBYSHEV // TEE",
-    price: "4 500 ₽",
-    images: ["/vlad-tee-front.jpg", "/vlad-tee-full1.jpg", "/vlad-tee-full2.jpg"],
-    description: "Футболка из коллекции, посвященной Владу. Уникальный крой и принт.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "vlad"
-  },
-  {
-    id: "vlad-ls",
-    name: "VLAD DROBYSHEV // LONGSLEEVE",
-    price: "5 900 ₽",
-    images: ["/vlad-ls-front.jpg", "/vlad-ls-full.jpg", "/vlad-ls-full1.jpg"],
-    description: "Лонгслив с агрессивным дизайном. Плотный хлопок.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "vlad"
-  },
-  {
-    id: "vlad-cape",
-    name: "VLAD DROBYSHEV // CAPE",
-    price: "7 500 ₽",
-    images: ["/vlad-cape-front.jpg", "/vlad-cape-full.jpg", "/vlad-cape-full1.jpg", "/vlad-cape-full2.jpg"],
-    description: "Накидка для завершения образа из коллекции ВЛАД ДРОБЫШЕВ.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "vlad"
-  },
-  {
-    id: "hat-test-2",
-    name: "ШАПКА ТЕСТ-2 // GREY",
-    price: "2 000 ₽",
-    images: ["/test-front.jpg", "/test-full.jpg", "/test-full1.jpg", "/test-full2.jpg", "/test-full3.jpg"],
-    description: "Материал: 100% хлопок. Принт 'ТЕСТ-2'. Размер универсальный.",
-    sizes: ["ONE SIZE"],
-    collection: "test"
-  },
-  {
-    id: "hoodie-spasibo",
-    name: "ХУДИ СПАСИБО // BLACK",
-    price: "5 000 ₽",
-    images: ["/hodie-thanks.jpg"],
-    description: "Довольно давняя работа. Сделал базовый худак для повседневной носки.",
-    sizes: ["L"],
-    collection: "archive"
-  },
-  {
-    id: "fuck-its-evs-top",
-    name: "FUCK IT'S EVS // TOP",
-    price: "3 500 ₽",
-    images: ["/product2.jpg"],
-    description: "Укороченный топ с агрессивным принтом. Плотный хлопок.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "18plus"
-  },
-  {
-    id: "18-plus-w-evs-top",
-    name: "18+ W EVS // TOP",
-    price: "3 500 ₽",
-    images: ["/18+w-front.jpg", "/18+w-full1.jpg", "/18+w-full2.jpg"],
-    description: "Белый топ с красным трафаретным принтом. Оверсайз крой.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "18plus"
-  },
-  {
-    id: "18-plus-evs-top",
-    name: "18+ EVS // TOP",
-    price: "3 500 ₽",
-    images: ["/18+-front.jpg", "/18+-full1.jpg", "/18+-full2.jpg", "/18+-full3.jpg"],
-    description: "Черный топ с оранжевым принтом. Укороченная длина.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "18plus"
-  },
-  {
-    id: "distressed-pants",
-    name: "DISTRESSED PANTS",
-    price: "7 990 ₽",
-    images: ["/dipa-front.jpg", "/dipa-back.jpg", "/dipa-full.jpg", "/dipa-full2.jpg", "/dipa-glav.jpg"],
-    description: "Джинсы с эффектом дистресс из коллекции DIPA.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "dipa",
-    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
-  },
-  {
-    id: "radioevs-shirt",
-    name: "RADIOEVS SHIRT // INSPIRED BY RADIOHEAD",
-    price: "5 990 ₽",
-    images: ["/radioevs-shirt-front.jpg", "/radioevs-shirt-full.jpg", "/radioevs-shirt-full2.jpg", "/radioevs-shirt-full3.jpg", "/radioevs-shirt-full4.jpg", "/radioevs-shirt-full5.jpg"],
-    description: "Футболка, созданная по вдохновению группой Radiohead.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "radioevs"
-  },
-  {
-    id: "redholes-pants",
-    name: "RED HOLES PANTS // DISTRESSED",
-    price: "8 490 ₽",
-    images: ["/redholes-front.jpg", "/redholes-back.jpg", "/redholes-full.jpg", "/redholes-full2.jpg", "/redholes-full3.jpg"],
-    description: "Штаны с огромными дырками на коленях.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "dipa",
-    hasSizeGuide: true // <-- ТАБЛИЦА ЕСТЬ
-  },
-  {
-    id: "krest-jacket",
-    name: "KREST JACKET // CRUSADER",
-    price: "18 990 ₽",
-    images: ["/krest-jacket-front.jpg", "/krest-jacket-double.jpg", "/krest-jacket-full.jpg"],
-    description: "Куртка выполнена по технике сшивания множества маленьких кусочков ткани.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "archive"
-  },
-  {
-    id: "psyho-jacket",
-    name: "PSYHO JACKET // SLIM FIT",
-    price: "14 990 ₽",
-    images: ["/psyho-jacket-front.jpg", "/psyho-jacket-full.jpg"],
-    description: "Эта куртка выполнена в слим фит.",
-    sizes: ["S", "M", "L", "XL"],
-    collection: "archive"
-  },
-];
+import { formatPrice, products } from "@/lib/products";
 
 export default function ProductPage() {
   const params = useParams();
@@ -237,7 +56,7 @@ export default function ProductPage() {
   const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
+    <main className="min-h-screen bg-black text-white flex flex-col pt-20">
       <Header />
       
       {/* БАННЕР ПРЕДЗАКАЗА (АВТОМАТИЧЕСКИ СКРЫТ, Т.К. У ДЖИНСОВ НЕТ isPreorder) */}
@@ -297,7 +116,7 @@ export default function ProductPage() {
                 type="product"
                 title={product.name}
                 image={product.images[0]}
-                price={product.price}
+                price={formatPrice(product.price)}
                 description={product.description}
                 size="md"
               />
@@ -352,7 +171,7 @@ export default function ProductPage() {
           </h1>
           
           <div className="flex items-center gap-4 mb-8">
-            <p className="text-2xl text-zinc-300 font-mono font-numbers">{product.price}</p>
+            <p className="text-2xl text-zinc-300 font-mono font-numbers">{formatPrice(product.price)}</p>
             {product.isPreorder && (
               <span className="text-xs border border-red-500/50 text-red-400 px-2 py-1 rounded uppercase tracking-wide">
                 Предзаказ
@@ -451,14 +270,15 @@ export default function ProductPage() {
                 </>
              ) : (
                 <AddToCartButton 
-                   product={{...product, selectedSize}} 
+                   productId={product.id}
+                   size={selectedSize ?? undefined}
                    customText={product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : undefined} 
                 />
              )}
           </div>
           
           <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 text-[10px] font-mono text-zinc-600">
-            <div>МАТЕРИАЛ: 100% COTTON</div>
+            <div>МАТЕРИАЛ: {product.material ?? "100% COTTON"}</div>
             <div>ПРОИЗВОДСТВО: RUSSIA</div>
             <div>УХОД: 30°C MACHINE WASH</div>
             <div>SKU: EVS-{product.id.toUpperCase().replace(/-/g, "")}</div>
@@ -540,7 +360,7 @@ export default function ProductPage() {
                   {item.name}
                 </h4>
                 <p className="text-xs font-mono text-zinc-500 mt-1">
-                  {item.price}
+                  {formatPrice(item.price)}
                 </p>
               </Link>
             ))}

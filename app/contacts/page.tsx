@@ -1,4 +1,3 @@
-import Link from "next/link";
 import Header from "@/_components/Header";
 
 export default function ContactsPage() {
@@ -48,11 +47,11 @@ export default function ContactsPage() {
 
           {/* БЛОК 2: СОЦСЕТИ (БЫЛО КАНАЛЫ) */}
           <div className="md:col-span-4 space-y-8 transform md:translate-y-4 md:rotate-1">
-            <h2 className="text-xl font-bold uppercase border-b-2 border-black pb-2 inline-block ml-4">
+            <h2 className="text-xl font-bold uppercase border-b-2 border-black pb-2 inline-block md:ml-4">
               СОЦСЕТИ
             </h2>
             
-            <div className="space-y-6 pl-4 border-l-2 border-black/20">
+            <div className="space-y-6 border-l-2 border-black/20 md:pl-4">
               {/* ТЕЛЕФОН */}
               <div className="group">
                 <span className="text-[10px] uppercase text-black/50 block mb-1">Direct Line</span>

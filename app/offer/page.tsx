@@ -51,14 +51,14 @@ export default function OfferPage() {
 
           <section>
   <h2 className="text-white font-bold uppercase tracking-wider mb-4 text-lg">5. Реквизиты и контакты</h2>
-  <p className="font-mono text-xs md:text-sm bg-zinc-900 p-6 border border-white/10 space-y-2">
+  <div className="font-mono text-xs md:text-sm bg-zinc-900 p-6 border border-white/10 space-y-2">
     <p>Продавец: Евсеев Илья Константинович</p>
     <p>ИНН: 390518200460</p>
     <p>СНИЛС: 196-775-695 59</p>
     <p>Адрес: 236000, г. Калининград, ул. Новгородская, д. 7</p>
     <p>Телефон / Telegram: +7 (902) 252-76-34</p>
     <p>Email: eikboy1709@gmail.com</p>
-  </p>
+  </div>
 </section>
 
         </div>
