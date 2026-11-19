@@ -54,7 +54,10 @@ function parseItems(value: unknown): string | CartLine[] {
       return `Неизвестный товар: ${id || "без id"}`;
     }
 
-    const size = typeof item.size === "string" ? item.size : "";
+    const sizeFromClient = typeof item.size === "string" ? item.size : "";
+    // У товара единственный размер — не ругаемся на старую корзину, просто берём его
+    const size =
+      product.sizes.length === 1 ? product.sizes[0] : sizeFromClient;
     if (product.sizes.length > 0 && !product.sizes.includes(size)) {
       return `Неверный размер для ${product.name}`;
     }

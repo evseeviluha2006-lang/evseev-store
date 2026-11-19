@@ -20,19 +20,33 @@ export function normalizeCart(value: unknown): CartLine[] {
     const item = raw as Record<string, unknown>;
 
     const id = typeof item.id === "string" ? item.id : "";
-    if (!getProduct(id)) continue;
+    const product = getProduct(id);
+    if (!product) continue;
 
-    const size = typeof item.size === "string" ? item.size : "";
+    // Пишем в корзину актуальный id: у товара мог поменяться адрес (burgziper → burgenzipper)
+    const realId = product.id;
+
+    let size = typeof item.size === "string" ? item.size.trim() : "";
+    if (product.sizes.length === 1) {
+      // Товар есть только в одном размере — старый размер из localStorage не должен ломать заказ
+      size = product.sizes[0];
+    } else if (size && !product.sizes.includes(size)) {
+      // Размера больше нет в наличии — просим выбрать заново
+      size = "";
+    }
+
     const rawQuantity = Number(item.quantity ?? item.qty ?? 1);
     const quantity = Number.isFinite(rawQuantity)
       ? Math.min(MAX_QUANTITY, Math.max(1, Math.round(rawQuantity)))
       : 1;
 
-    const existing = lines.find((line) => line.id === id && line.size === size);
+    const existing = lines.find(
+      (line) => line.id === realId && line.size === size
+    );
     if (existing) {
       existing.quantity = Math.min(MAX_QUANTITY, existing.quantity + quantity);
     } else {
-      lines.push({ id, size, quantity });
+      lines.push({ id: realId, size, quantity });
     }
   }
 
