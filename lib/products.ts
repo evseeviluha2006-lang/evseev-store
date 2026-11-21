@@ -15,6 +15,8 @@ export type Product = {
   hasSizeGuide?: boolean;
   isPreorder?: boolean;
   preorderDate?: string;
+  /** Ограниченный дроп */
+  limitedDrop?: boolean;
   /** Скрыть из общего каталога, но оставить карточку и покупку доступными */
   hidden?: boolean;
 };
@@ -89,6 +91,22 @@ export const products: Product[] = [
     sizes: ["S", "M"],
     collection: "accessories",
     hasSizeGuide: true,
+  },
+  {
+    id: "distress-wallet",
+    name: "DISTRESS WALLET // ARCHIVE",
+    price: 750,
+    images: [
+      "/wallet-distress-1.jpg",
+      "/wallet-distress-2.jpg",
+      "/wallet-distress-3.jpg",
+      "/wallet-distress-4.jpg",
+    ],
+    description: "Архивный дистресс кошелек из производственного хлопка.",
+    material: "ПРОИЗВОДСТВЕННЫЙ ХЛОПОК",
+    sizes: ["ONE SIZE"],
+    collection: "accessories",
+    limitedDrop: true,
   },
   {
     id: "hoodie-tvar",

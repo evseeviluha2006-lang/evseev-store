@@ -41,7 +41,7 @@ export default function ProductCard({ product, priority = false, index, classNam
           />
         )}
 
-        {typeof index === "number" && (
+        {typeof index === "number" && !product.isPreorder && !product.limitedDrop && (
           <span className="absolute top-2.5 left-2.5 text-[9px] tabular-nums tracking-[0.18em] text-paper mix-blend-difference">
             {String(index + 1).padStart(2, "0")}
           </span>
@@ -50,6 +50,12 @@ export default function ProductCard({ product, priority = false, index, classNam
         {product.isPreorder && (
           <span className="absolute top-2.5 left-2.5 bg-paper px-2 py-1 text-[9px] font-medium uppercase tracking-[0.16em] text-ink">
             Pre-order
+          </span>
+        )}
+
+        {product.limitedDrop && !product.isPreorder && (
+          <span className="absolute top-2.5 left-2.5 bg-ink px-2 py-1 text-[9px] font-medium uppercase tracking-[0.16em] text-paper">
+            Limited drop
           </span>
         )}
 

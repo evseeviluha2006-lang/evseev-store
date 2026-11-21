@@ -89,9 +89,18 @@ export default function ProductPage() {
 
       {product.isPreorder && (
         <div className="wrap mt-4">
-          <div className="flex flex-col gap-1 bg-acid px-4 py-3 text-[9px] font-medium uppercase tracking-[0.18em] text-ink sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-1 border border-ink bg-paper px-4 py-3 text-[9px] font-medium uppercase tracking-[0.18em] text-ink sm:flex-row sm:items-center sm:justify-between">
             <span>Предзаказ — ограниченный тираж</span>
             <span>Отправка {product.preorderDate ?? "после отшива"}</span>
+          </div>
+        </div>
+      )}
+
+      {product.limitedDrop && !product.isPreorder && (
+        <div className="wrap mt-4">
+          <div className="flex flex-col gap-1 bg-ink px-4 py-3 text-[9px] font-medium uppercase tracking-[0.18em] text-paper sm:flex-row sm:items-center sm:justify-between">
+            <span>Limited drop — ограниченный тираж</span>
+            <span>Пока есть в наличии</span>
           </div>
         </div>
       )}
@@ -203,7 +212,7 @@ export default function ProductPage() {
             <span className="text-[17px] tabular-nums">{formatPrice(product.price)}</span>
             <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-muted">
               <span className="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden />
-              {product.isPreorder ? "Предзаказ" : "В наличии"}
+              {product.isPreorder ? "Предзаказ" : product.limitedDrop ? "Limited drop" : "В наличии"}
             </span>
           </div>
 

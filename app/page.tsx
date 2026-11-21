@@ -139,6 +139,55 @@ export default function Home() {
         />
       </div>
 
+      {/* ---------- LIMITED DROP: WALLET ---------- */}
+      <section className="mt-16 border-y border-ink bg-paper md:mt-24">
+        <div className="grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          <div className="relative min-h-[360px] overflow-hidden border-b border-ink md:min-h-[560px] md:border-b-0 md:border-r md:border-ink">
+            <video
+              src="/wallet-drop.mp4"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="metadata"
+              className="absolute inset-0 h-full w-full scale-105 object-cover blur-[2px] grayscale"
+            />
+            <div className="absolute inset-0 bg-ink/20" />
+            <div className="absolute left-4 top-4 bg-ink px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.2em] text-paper md:left-6 md:top-6">
+              Limited drop
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center px-5 py-10 md:px-10 md:py-14 lg:px-14">
+            <p className="eyebrow text-muted">Archive accessory / Limited</p>
+            <h2 className="display mt-4 text-[clamp(2.2rem,6vw,5.2rem)]">
+              DISTRESS
+              <br />
+              WALLET
+            </h2>
+            <p className="mt-5 max-w-md text-[12px] leading-relaxed tracking-[0.04em] text-muted md:text-[13px]">
+              Дроп ограничен. Архивный дистресс кошелек из производственного
+              хлопка — когда тираж закончится, повторного выпуска не будет.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center gap-4">
+              <Link
+                href="/catalog/distress-wallet"
+                className="group flex items-center gap-5 bg-ink px-7 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:bg-paper hover:text-ink hover:outline hover:outline-1 hover:-outline-offset-1 hover:outline-ink"
+              >
+                Смотреть дроп
+                <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+                  →
+                </span>
+              </Link>
+              <span className="text-[10px] uppercase tracking-[0.18em] text-muted">
+                750 ₽ / limited quantity
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ---------- НОВОЕ ---------- */}
       <section className="wrap pt-14 md:pt-20">
         <SectionHead
