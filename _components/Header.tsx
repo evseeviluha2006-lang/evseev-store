@@ -1,23 +1,56 @@
 "use client";
+
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { countCartItems, useCartLines } from "@/lib/cart";
+import { useLikedItems } from "@/lib/likes";
+import { collections } from "@/lib/collections";
+import Marquee from "@/_components/Marquee";
 
-const navLinks = [
-  { href: "/catalog", label: "ТОВАРЫ" },
+const nav = [
+  { href: "/catalog", label: "МАГАЗИН" },
   { href: "/collections", label: "КОЛЛЕКЦИИ" },
-  { href: "/education", label: "ОБУЧЕНИЕ" },
+  { href: "/education", label: "АКАДЕМИЯ" },
   { href: "/contacts", label: "КОНТАКТЫ" },
+];
+
+const shopMenu = [
+  {
+    title: "КАТЕГОРИИ",
+    links: [
+      { label: "Всё", href: "/catalog" },
+      { label: "Верх", href: "/catalog?cat=tops" },
+      { label: "Низ", href: "/catalog?cat=bottoms" },
+      { label: "Верхняя одежда", href: "/catalog?cat=outerwear" },
+      { label: "Аксессуары", href: "/catalog?cat=accessories" },
+    ],
+  },
+  {
+    title: "КОЛЛЕКЦИИ",
+    links: collections.map((collection) => ({
+      label: collection.title,
+      href: collection.href,
+    })),
+  },
+];
+
+const ticker = [
+  "БЕСПЛАТНАЯ ДОСТАВКА ОТ 10 000 ₽",
+  "НОВЫЙ ДРОП — WINTER 2.6",
+  "КОМПЛЕКТ ИЗ 3 ВЕЩЕЙ — СКИДКА 15%",
+  "СДЕЛАНО В КАЛИНИНГРАДЕ",
 ];
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [mega, setMega] = useState<string | null>(null);
   const pathname = usePathname();
   const cartLines = useCartLines();
   const cartCount = countCartItems(cartLines);
+  const likedCount = useLikedItems().length;
 
-  // Блокируем скролл, когда открыто мобильное меню (побочный эффект — только в effect)
   useEffect(() => {
     if (!isMenuOpen) return;
 
@@ -29,87 +62,235 @@ export default function Header() {
     };
   }, [isMenuOpen]);
 
+  useEffect(() => {
+    setIsMenuOpen(false);
+    setMega(null);
+  }, [pathname]);
+
+  const isActive = (href: string) =>
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
+
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* ВЕРХНЯЯ БЕГУЩАЯ СТРОКА */}
+      <div className="bg-ink text-paper">
+        <Marquee
+          items={ticker}
+          speed="44s"
+          className="py-2.5"
+          itemClassName="eyebrow text-[8.5px] tracking-[0.28em]"
+        />
+      </div>
+
+      {/* ШАПКА */}
+      <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-xl">
+        <div className="wrap flex h-16 items-center justify-between gap-6 md:h-[72px]">
+          {/* МОБИЛЬНОЕ МЕНЮ */}
+          <button
+            type="button"
+            onClick={() => setIsMenuOpen(true)}
+            className="-ml-2 flex h-11 w-11 flex-col items-start justify-center gap-[5px] px-2 md:hidden"
+            aria-label="Открыть меню"
+            aria-expanded={isMenuOpen}
+          >
+            <span className="h-px w-6 bg-ink" />
+            <span className="h-px w-6 bg-ink" />
+            <span className="h-px w-4 bg-ink" />
+          </button>
 
           {/* ЛОГОТИП */}
           <Link
             href="/"
-            className="text-2xl font-black tracking-tighter uppercase text-white z-50 relative"
             onClick={() => setIsMenuOpen(false)}
+            aria-label="EVSEEV — на главную"
+            className="flex shrink-0 items-center gap-2"
           >
-            EVSEEV
+            <Image
+              src="/logo-mark-dark.png"
+              alt=""
+              width={371}
+              height={800}
+              priority
+              className="h-6 w-auto md:h-7"
+            />
+            <span className="text-[26px] leading-none font-bold tracking-[-0.07em] uppercase md:text-[30px]">
+              EVSEEV
+              <sup className="ml-0.5 align-super text-[8px] tracking-normal">®</sup>
+            </span>
           </Link>
 
-          {/* ДЕСКТОП МЕНЮ (скрыто на мобилке) */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-xs font-bold tracking-[2px] uppercase transition-colors ${
-                  pathname === link.href ? "text-white border-b border-white pb-1" : "text-zinc-500 hover:text-white"
-                }`}
+          {/* ДЕСКТОП-МЕНЮ */}
+          <nav className="hidden flex-1 items-center justify-center gap-7 lg:gap-10 md:flex">
+            {nav.map((item) => (
+              <div
+                key={item.href}
+                className="relative"
+                onMouseEnter={() => setMega(item.label)}
+                onMouseLeave={() => setMega(null)}
               >
-                {link.label}
-              </Link>
+                <Link
+                  href={item.href}
+                  onFocus={() => setMega(item.label)}
+                  className={`eyebrow u-link py-2 text-[10px] transition-colors ${
+                    isActive(item.href) ? "text-ink" : "text-ink/70 hover:text-ink"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+
+                {item.href === "/catalog" && mega === item.label && (
+                  <div className="absolute top-full left-1/2 w-[640px] -translate-x-1/2 pt-5">
+                    <div className="grid grid-cols-[1fr_1fr_0.9fr] gap-7 border border-line bg-paper p-6 shadow-[0_30px_70px_rgba(0,0,0,0.10)]">
+                      {shopMenu.map((column) => (
+                        <div key={column.title}>
+                          <p className="eyebrow mb-4 text-[9px] text-muted">
+                            {column.title}
+                          </p>
+                          <ul className="space-y-2.5">
+                            {column.links.map((link) => (
+                              <li key={link.href + link.label}>
+                                <Link
+                                  href={link.href}
+                                  className="text-[12px] uppercase tracking-[0.04em] hover:text-muted transition-colors"
+                                >
+                                  {link.label}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+
+                      <Link
+                        href="/collections/winter-2-6"
+                        className="group relative block aspect-[3/4] overflow-hidden bg-paper-2"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/winter26-cover.jpg"
+                          alt="Winter 2.6"
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                        <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
+                          WINTER 2.6 →
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
 
-          {/* ПРАВАЯ ЧАСТЬ: Корзина и Бургер */}
-          <div className="flex items-center gap-6">
-
-            {/* Ссылка на корзину (видна всегда) */}
+          {/* ПРАВАЯ ЧАСТЬ */}
+          <div className="flex shrink-0 items-center gap-3 md:gap-5">
             <Link
-              href="/cart"
-              className="relative z-50 -m-2.5 flex h-11 w-11 items-center justify-center p-2.5"
-              aria-label={`Корзина, товаров: ${cartCount}`}
+              href="/likes"
+              className="hidden items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] hover:text-muted transition-colors sm:flex"
+              aria-label={`Избранное, товаров: ${likedCount}`}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white hover:text-zinc-400 transition-colors"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
-              {cartCount > 0 && (
-                <span className="absolute top-0 right-0 min-w-[18px] h-[18px] px-1 bg-red-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
-                  {cartCount}
-                </span>
-              )}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+              </svg>
+              <span className="hidden lg:inline">ИЗБРАННОЕ</span>
+              <span>({likedCount})</span>
             </Link>
 
-            {/* КНОПКА БУРГЕР (видна только на мобилке) */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden -m-1 flex h-11 w-11 flex-col gap-1.5 items-center justify-center p-2.5 z-50 relative"
-              aria-label={isMenuOpen ? "Закрыть меню" : "Открыть меню"}
-              aria-expanded={isMenuOpen}
+            <Link
+              href="/cart"
+              className="group flex items-center gap-2 border border-ink px-3.5 py-2.5 text-[10px] font-medium uppercase tracking-[0.16em] transition-colors hover:bg-ink hover:text-paper md:px-4"
+              aria-label={`Корзина, товаров: ${cartCount}`}
             >
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-              <span className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
-            </button>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                <path d="M3 6h18" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              <span className="hidden sm:inline">КОРЗИНА</span>
+              <span className="tabular-nums">({cartCount})</span>
+            </Link>
           </div>
         </div>
       </header>
 
-      {/* МОБИЛЬНОЕ МЕНЮ (Полноэкранное) */}
+      {/* МОБИЛЬНОЕ МЕНЮ */}
       <div
-        className={`fixed inset-0 bg-black z-40 flex flex-col items-center justify-center gap-8 transition-transform duration-300 ease-in-out md:hidden ${
-          isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed inset-0 z-[70] flex flex-col bg-paper transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] md:hidden ${
+          isMenuOpen ? "translate-x-0" : "translate-x-full"
         }`}
+        aria-hidden={!isMenuOpen}
       >
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
+        <div className="flex h-16 items-center justify-between border-b border-line px-[18px]">
+          <span className="text-[24px] font-bold leading-none tracking-[-0.07em] uppercase">
+            EVSEEV<sup className="ml-0.5 align-super text-[8px]">®</sup>
+          </span>
+          <button
+            type="button"
             onClick={() => setIsMenuOpen(false)}
-            className="text-4xl font-black uppercase tracking-tighter text-white hover:text-zinc-500 transition-colors active:scale-95 transform"
+            className="-mr-2 flex h-11 w-11 items-center justify-center"
+            aria-label="Закрыть меню"
           >
-            {link.label}
-          </Link>
-        ))}
+            <svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" aria-hidden>
+              <path d="M5 5l14 14M19 5 5 19" />
+            </svg>
+          </button>
+        </div>
 
-        {/* Доп. ссылки внизу меню */}
-        <div className="absolute bottom-10 flex flex-col items-center gap-4">
-           <Link href="/offer" onClick={() => setIsMenuOpen(false)} className="text-xs text-zinc-500 uppercase tracking-widest">Оферта</Link>
+        <div className="flex flex-1 flex-col overflow-y-auto px-[18px] pt-6 pb-10">
+          <nav className="flex flex-col">
+            {nav.map((item, index) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex items-baseline gap-4 border-b border-line py-5"
+              >
+                <span className="w-6 shrink-0 text-[9px] tabular-nums tracking-[0.2em] text-muted">
+                  0{index + 1}
+                </span>
+                <span className="display-sm text-[clamp(2rem,10vw,3rem)]">{item.label}</span>
+              </Link>
+            ))}
+          </nav>
+
+          <div className="mt-8 grid grid-cols-2 gap-4">
+            <Link
+              href="/likes"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center justify-between border border-line px-4 py-4 text-[11px] uppercase tracking-[0.16em]"
+            >
+              Избранное <span className="tabular-nums">{likedCount}</span>
+            </Link>
+            <Link
+              href="/cart"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex items-center justify-between border border-ink bg-ink px-4 py-4 text-[11px] uppercase tracking-[0.16em] text-paper"
+            >
+              Корзина <span className="tabular-nums">{cartCount}</span>
+            </Link>
+          </div>
+
+          <div className="mt-auto space-y-3 pt-10">
+            <a
+              href="https://t.me/evs_clo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="u-link text-[11px] uppercase tracking-[0.18em]"
+            >
+              Telegram @evs_clo
+            </a>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-muted">
+              Калининград · 10:00 — 22:00
+            </p>
+            <div className="flex gap-6 pt-2">
+              <Link href="/manifest" className="u-link text-[10px] uppercase tracking-[0.18em] text-muted">
+                Манифест
+              </Link>
+              <Link href="/offer" className="u-link text-[10px] uppercase tracking-[0.18em] text-muted">
+                Оферта
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </>

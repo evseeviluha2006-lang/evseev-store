@@ -1,11 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --background: #000000;
-  --foreground: #ededed;
+  --paper: #ffffff;
+  --paper-2: #f2f2f2;
+  --ink: #000000;
+  --muted: #666666;
+  --line: #dcdcdc;
+  --acid: #ffffff;
+  --background: var(--paper);
+  --foreground: var(--ink);
 }
 
 @theme inline {
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-acid: var(--acid);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   /* Space Grotesk подключается в layout.tsx как --font-space */
@@ -13,37 +25,185 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1;
+  }
+
+  ::selection {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  img {
+    user-select: none;
+  }
 }
 
-/* АНИМАЦИИ ГЛАВНОЙ СТРАНИЦЫ */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ---------- КОНТЕЙНЕР ---------- */
+@layer components {
+.wrap {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 1680px;
+  padding-inline: 18px;
 }
 
-.animate-fade-in-delayed {
-  animation: fadeInUp 1s ease-out 1.5s forwards;
+@media (min-width: 768px) {
+  .wrap {
+    padding-inline: 32px;
+  }
 }
 
-.animate-fade-in-late {
-  animation: fadeInUp 1s ease-out 2s forwards;
+@media (min-width: 1280px) {
+  .wrap {
+    padding-inline: 44px;
+  }
 }
 
+/* ---------- ТИПОГРАФИКА ---------- */
+.display {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.05em;
+  line-height: 0.85;
+}
+
+.display-sm {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+  line-height: 0.9;
+}
+
+.eyebrow {
+  font-size: 10px;
+  line-height: 1.2;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+}
+
+.u-link {
+  position: relative;
+  display: inline-block;
+}
+
+.u-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right center;
+  transition: transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.u-link:hover::after,
+.u-link:focus-visible::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* ---------- МЕДИА ---------- */
+.media {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+
+.media img {
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.6s ease;
+}
+
+.group:hover .media img {
+  transform: scale(1.035);
+}
+
+/* ---------- БЕГУЩАЯ СТРОКА ---------- */
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation-name: marquee;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+/* ---------- АНИМАЦИИ ПОЯВЛЕНИЯ ---------- */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.rise-1 { animation-delay: 0.08s; }
+.rise-2 { animation-delay: 0.16s; }
+.rise-3 { animation-delay: 0.24s; }
+.rise-4 { animation-delay: 0.32s; }
+
+/* ---------- ГЛАВНАЯ: ЗУМ ГЕРОЯ ---------- */
 @keyframes heroZoom {
-  0% { transform: scale(1.2); filter: blur(10px); }
+  0% { transform: scale(1.12); filter: blur(6px); }
   100% { transform: scale(1); filter: blur(0); }
 }
 
 .animate-hero-zoom {
-  animation: heroZoom 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  animation: heroZoom 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
 }
 
 /* Появление картинки товара при переключении */
 @keyframes slideUpBlur {
-  from { opacity: 0; transform: translateY(16px); filter: blur(6px); }
+  from { opacity: 0; transform: translateY(12px); filter: blur(5px); }
   to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 
@@ -60,7 +220,7 @@ body {
   animation: bounceSlow 3s ease-in-out infinite;
 }
 
-/* АНИМАЦИЯ КАТАЛОГА */
+/* ---------- КАТАЛОГ ---------- */
 @keyframes casino-reveal {
   0% {
     clip-path: inset(0 100% 0 0);
@@ -86,21 +246,72 @@ body {
 /* Фирменный шрифт для цифр */
 .font-numbers {
   font-family: var(--font-evseev-glav), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-  font-size: 1.15em;
+  font-size: 1.1em;
   font-weight: 700;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
+}
+
+/* Скрыть скроллбар у горизонтальных лент */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Тонкие поля ввода */
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  border-radius: 0;
+  transition: border-color 0.25s ease;
+}
+
+.field::placeholder {
+  color: var(--muted);
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+
+.field:focus {
+  border-bottom-color: var(--ink);
+}
+}
+
+/* Радио/чекбоксы в новой стилистике */
+.check {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  display: inline-grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.check:checked {
+  background: var(--ink);
+  box-shadow: inset 0 0 0 3px var(--paper);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-hero-zoom,
-  .animate-fade-in-delayed,
-  .animate-fade-in-late,
-  .animate-slide-up-blur,
-  .animate-bounce-slow,
-  .animate-casino-spin {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

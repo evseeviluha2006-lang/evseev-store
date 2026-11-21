@@ -1,19 +1,22 @@
 "use client";
-import { useState, useRef } from "react";
+
+import { useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Header from "@/_components/Header";
 import AddToCartButton from "@/_components/AddToCartButton";
 import LikeButton from "@/_components/LikeButton";
+import ProductCard from "@/_components/ProductCard";
+import SectionHead from "@/_components/SectionHead";
 import SizeGuide from "@/_components/SizeGuide";
+import { collectionLabel } from "@/lib/collections";
 import { formatPrice, products } from "@/lib/products";
 
 export default function ProductPage() {
   const params = useParams();
   const id = params?.id as string;
-  const product = products.find((p) => p.id === id);
-  
+  const product = products.find((item) => item.id === id);
+
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
@@ -21,21 +24,28 @@ export default function ProductPage() {
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold uppercase mb-4">ТОВАР НЕ НАЙДЕН</h1>
-          <Link href="/catalog" className="text-zinc-500 underline hover:text-white">Вернуться в каталог</Link>
-        </div>
+      <main className="wrap flex min-h-[60vh] flex-col items-center justify-center py-24 text-center">
+        <p className="eyebrow text-muted">Error 404</p>
+        <h1 className="display mt-4 text-[clamp(2.2rem,6vw,4.5rem)]">ТОВАР НЕ НАЙДЕН</h1>
+        <p className="mt-4 text-[13px] text-muted">
+          Возможно, вещь продана или ссылка устарела.
+        </p>
+        <Link
+          href="/catalog"
+          className="mt-8 border border-ink px-7 py-4 text-[10px] uppercase tracking-[0.18em] transition-colors hover:bg-ink hover:text-paper"
+        >
+          Вернуться в магазин
+        </Link>
       </main>
     );
   }
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX;
+  const handleTouchStart = (event: React.TouchEvent) => {
+    touchStartX.current = event.targetTouches[0].clientX;
   };
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
+  const handleTouchMove = (event: React.TouchEvent) => {
+    touchEndX.current = event.targetTouches[0].clientX;
   };
 
   const handleTouchEnd = () => {
@@ -53,64 +63,61 @@ export default function ProductPage() {
     touchEndX.current = null;
   };
 
-  const relatedProducts = products.filter(p => p.collection === product.collection && p.id !== product.id).slice(0, 4);
+  const related = products.filter(
+    (item) => item.collection === product.collection && item.id !== product.id
+  );
+  const suggested = (
+    related.length > 0
+      ? related
+      : products.filter((item) => !item.hidden && item.id !== product.id)
+  ).slice(0, 4);
+
+  const activeImage = product.images[activeImageIndex];
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col pt-20">
-      <Header />
-      
-      {/* БАННЕР ПРЕДЗАКАЗА (АВТОМАТИЧЕСКИ СКРЫТ, Т.К. У ДЖИНСОВ НЕТ isPreorder) */}
+    <main>
+      {/* ХЛЕБНЫЕ КРОШКИ */}
+      <div className="wrap pt-5 md:pt-7">
+        <nav className="flex flex-wrap items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-muted">
+          <Link href="/" className="hover:text-ink">Главная</Link>
+          <span aria-hidden>/</span>
+          <Link href="/catalog" className="hover:text-ink">Магазин</Link>
+          <span aria-hidden>/</span>
+          <span className="text-ink">{product.name}</span>
+        </nav>
+      </div>
+
       {product.isPreorder && (
-        <div className="w-full bg-red-600 text-white text-center py-2 text-xs font-bold tracking-[4px] uppercase animate-pulse">
-          LIMITED PRE-ORDER // ОТПРАВКА {product.preorderDate}
+        <div className="wrap mt-4">
+          <div className="flex flex-col gap-1 bg-acid px-4 py-3 text-[9px] font-medium uppercase tracking-[0.18em] text-ink sm:flex-row sm:items-center sm:justify-between">
+            <span>Предзаказ — ограниченный тираж</span>
+            <span>Отправка {product.preorderDate ?? "после отшива"}</span>
+          </div>
         </div>
       )}
 
-      <div className="flex-grow pt-12 pb-10 px-4 md:px-8 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-start">
-        
+      <div className="wrap mt-5 grid gap-9 pb-4 md:mt-8 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] lg:gap-12 xl:gap-20">
         {/* ГАЛЕРЕЯ */}
-        <div className="flex gap-4 w-full md:w-auto flex-col md:flex-row">
-          <div className="hidden md:flex flex-col gap-4 w-[80px] flex-shrink-0 order-2 md:order-1">
-            {product.images.map((img, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveImageIndex(idx)}
-                className={`relative aspect-square w-full overflow-hidden border transition-all duration-200 ${
-                  activeImageIndex === idx
-                    ? "border-white opacity-100 ring-1 ring-white/50"
-                    : "border-white/20 opacity-50 hover:opacity-80"
-                }`}
-              >
-                {img && <Image src={img} alt={`View ${idx}`} fill className="object-cover" />}
-              </button>
-            ))}
-          </div>
-
-          <div 
-            className={`relative w-full md:w-[600px] min-h-[400px] md:min-h-[600px] bg-zinc-900 overflow-hidden border group flex items-center justify-center order-1 md:order-2 select-none ${product.isPreorder ? 'border-red-500/50' : 'border-white/10'}`}
+        <div>
+          <div
+            className="group relative aspect-[4/5] w-full touch-pan-y overflow-hidden bg-paper-2 select-none"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {product.images[activeImageIndex] && (
+            {activeImage && (
               <Image
-                key={product.images[activeImageIndex]}
-                src={product.images[activeImageIndex]}
+                key={activeImage}
+                src={activeImage}
                 alt={product.name}
-                width={1200}
-                height={1600}
-                className="w-full h-auto object-contain animate-slide-up-blur pointer-events-none"
+                fill
                 priority
+                sizes="(max-width: 1024px) 100vw, 52vw"
+                className="animate-slide-up-blur object-contain p-2 md:p-6"
               />
             )}
-            
-            {product.isPreorder && (
-              <div className="absolute top-4 left-4 bg-black/80 backdrop-blur-sm border border-red-500 px-3 py-1 z-20">
-                <span className="text-[10px] font-bold text-red-500 uppercase tracking-widest">PRE-ORDER</span>
-              </div>
-            )}
 
-            <div className="absolute top-4 right-4 z-20">
+            <div className="absolute top-3 right-3 z-20">
               <LikeButton
                 id={product.id}
                 type="product"
@@ -122,256 +129,297 @@ export default function ProductPage() {
               />
             </div>
 
-            <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 md:hidden z-20">
-               <span className="text-[10px] font-mono text-white/70 bg-black/50 px-2 py-1 rounded backdrop-blur-sm">
-                 {activeImageIndex + 1} / {product.images.length}
-               </span>
-               <div className="flex justify-center gap-2">
-                {product.images.map((_, idx) => (
+            <span className="absolute top-3 left-3 bg-paper/85 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.18em] backdrop-blur-sm">
+              {collectionLabel(product.collection)}
+            </span>
+
+            {product.images.length > 1 && (
+              <>
+                <div className="absolute inset-y-0 left-0 hidden items-center pl-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:flex">
                   <button
-                    key={idx}
-                    onClick={() => setActiveImageIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all ${activeImageIndex === idx ? "bg-white w-6" : "bg-white/30 w-1.5"}`}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            <div className="hidden md:flex absolute inset-y-0 left-0 right-0 justify-between items-center px-4 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20">
-               <button 
-                 onClick={() => setActiveImageIndex(Math.max(0, activeImageIndex - 1))}
-                 className="pointer-events-auto p-2 bg-black/50 rounded-full text-white hover:bg-black/80 disabled:opacity-0"
-                 disabled={activeImageIndex === 0}
-               >
-                 ←
-               </button>
-               <button 
-                 onClick={() => setActiveImageIndex(Math.min(product.images.length - 1, activeImageIndex + 1))}
-                 className="pointer-events-auto p-2 bg-black/50 rounded-full text-white hover:bg-black/80 disabled:opacity-0"
-                 disabled={activeImageIndex === product.images.length - 1}
-               >
-                 →
-               </button>
-            </div>
+                    type="button"
+                    onClick={() => setActiveImageIndex(Math.max(0, activeImageIndex - 1))}
+                    disabled={activeImageIndex === 0}
+                    aria-label="Предыдущее фото"
+                    className="grid h-10 w-10 place-items-center border border-line bg-paper/90 text-[13px] backdrop-blur-sm transition-colors hover:bg-paper disabled:opacity-0"
+                  >
+                    ←
+                  </button>
+                </div>
+                <div className="absolute inset-y-0 right-0 hidden items-center pr-3 opacity-0 transition-opacity duration-300 group-hover:opacity-100 md:flex">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setActiveImageIndex(Math.min(product.images.length - 1, activeImageIndex + 1))
+                    }
+                    disabled={activeImageIndex === product.images.length - 1}
+                    aria-label="Следующее фото"
+                    className="grid h-10 w-10 place-items-center border border-line bg-paper/90 text-[13px] backdrop-blur-sm transition-colors hover:bg-paper disabled:opacity-0"
+                  >
+                    →
+                  </button>
+                </div>
+              </>
+            )}
+
+            <span className="absolute right-3 bottom-3 text-[9px] tabular-nums uppercase tracking-[0.18em] text-muted">
+              {String(activeImageIndex + 1).padStart(2, "0")} / {String(product.images.length).padStart(2, "0")}
+            </span>
           </div>
+
+          {product.images.length > 1 && (
+            <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
+              {product.images.map((image, index) => (
+                <button
+                  key={image + index}
+                  type="button"
+                  onClick={() => setActiveImageIndex(index)}
+                  aria-label={`Фото ${index + 1}`}
+                  aria-pressed={activeImageIndex === index}
+                  className={`relative aspect-square w-[18%] min-w-[64px] shrink-0 overflow-hidden border bg-paper-2 transition-opacity ${
+                    activeImageIndex === index
+                      ? "border-ink opacity-100"
+                      : "border-transparent opacity-60 hover:opacity-100"
+                  }`}
+                >
+                  <Image src={image} alt="" fill sizes="90px" className="object-contain p-1" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ИНФОРМАЦИЯ */}
-        <div className="flex flex-col justify-center h-full py-8 md:py-0 sticky top-24">
-          <div className="mb-6 text-[10px] font-mono text-zinc-500 tracking-widest uppercase flex items-center gap-2">
-            {product.isPreorder ? (
-              <span className="text-red-500 font-bold">DROP 00 // PRE-ORDER</span>
-            ) : (
-              <span>SEASON 01 // 2024</span>
-            )}
-          </div>
-          
-          <h1 className="text-3xl md:text-5xl font-black tracking-tighter mb-2 uppercase leading-[0.9]">
+        <div className="lg:sticky lg:top-[96px] lg:self-start">
+          <p className="eyebrow text-muted">
+            {collectionLabel(product.collection)} / 2026
+          </p>
+
+          <h1 className="display-sm mt-4 text-[clamp(1.9rem,4.2vw,3.4rem)]">
             {product.name}
           </h1>
-          
-          <div className="flex items-center gap-4 mb-8">
-            <p className="text-2xl text-zinc-300 font-mono font-numbers">{formatPrice(product.price)}</p>
-            {product.isPreorder && (
-              <span className="text-xs border border-red-500/50 text-red-400 px-2 py-1 rounded uppercase tracking-wide">
-                Предзаказ
-              </span>
-            )}
+
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            <span className="text-[17px] tabular-nums">{formatPrice(product.price)}</span>
+            <span className="flex items-center gap-2 text-[9px] uppercase tracking-[0.16em] text-muted">
+              <span className="h-1.5 w-1.5 rounded-full bg-ink" aria-hidden />
+              {product.isPreorder ? "Предзаказ" : "В наличии"}
+            </span>
           </div>
 
-          <p className="text-zinc-400 leading-relaxed mb-6 text-sm md:text-base max-w-md">
+          <p className="mt-5 max-w-md text-[13px] leading-relaxed text-muted">
             {product.description}
           </p>
 
-          {product.isPreorder && (
-            <div className="mb-8 p-4 border border-white/10 bg-zinc-900/50 flex items-start gap-3">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500 flex-shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              <div className="text-xs text-zinc-300 leading-relaxed">
-                <p className="font-bold text-white mb-1 uppercase tracking-wide">Внимание: Предзаказ</p>
-                <p>Отправка состоится <span className="text-white font-bold">{product.preorderDate}</span>.</p>
+          {/* РАЗМЕРЫ */}
+          {product.sizes.length > 0 && (
+            <div className="mt-7 border-t border-line pt-5">
+              <div className="mb-3 flex items-end justify-between gap-4">
+                <span className="eyebrow">Размер</span>
+                {!selectedSize ? (
+                  <span className="text-[9px] uppercase tracking-[0.14em] text-muted">
+                    Выберите размер
+                  </span>
+                ) : (
+                  <span className="text-[9px] uppercase tracking-[0.14em] text-muted">
+                    Выбран: {selectedSize}
+                  </span>
+                )}
               </div>
+
+              <div className="flex flex-wrap gap-2">
+                {product.sizes.map((size) => (
+                  <button
+                    key={size}
+                    type="button"
+                    onClick={() => setSelectedSize(size)}
+                    aria-pressed={selectedSize === size}
+                    className={`h-11 min-w-[52px] border px-4 text-[11px] font-medium uppercase tracking-[0.08em] transition-colors ${
+                      selectedSize === size
+                        ? "border-ink bg-ink text-paper"
+                        : "border-line hover:border-ink"
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+
+              {product.hasSizeGuide &&
+                (product.id === "hat-sex" ? (
+                  <div className="mt-4 overflow-x-auto border-t border-line">
+                    <table className="w-full text-left text-[11px]">
+                      <thead>
+                        <tr className="border-b border-line text-[9px] uppercase tracking-[0.16em] text-muted">
+                          <th className="py-2.5 pr-3 font-medium">Размер</th>
+                          <th className="py-2.5 pr-3 font-medium">Обхват головы (см)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="border-b border-line/70">
+                          <td className="py-2.5 pr-3 font-medium">S</td>
+                          <td className="py-2.5 pr-3 tabular-nums text-muted">54–56</td>
+                        </tr>
+                        <tr className="border-b border-line/70">
+                          <td className="py-2.5 pr-3 font-medium">M</td>
+                          <td className="py-2.5 pr-3 tabular-nums text-muted">56–58</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <p className="pt-3 text-[9px] uppercase tracking-[0.12em] text-muted">
+                      Допускается погрешность ±1 см.
+                    </p>
+                  </div>
+                ) : (
+                  <SizeGuide />
+                ))}
             </div>
           )}
-          
-                   {/* БЛОК РАЗМЕРОВ */}
-          {product.sizes && product.sizes.length > 0 && (
-             <div className="mb-8">
-                <div className="flex justify-between items-center mb-3">
-                   <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Выберите размер:</p>
-                   {!selectedSize && <span className="text-[10px] text-red-500 uppercase tracking-wider">Обязательно</span>}
-                </div>
-                
-                {/* АДАПТИВНАЯ СЕТКА КНОПОК */}
-                <div className={`grid gap-2 mb-4 ${
-                  product.sizes.length === 1
-                    ? 'grid-cols-1 max-w-[120px]'
-                    : product.sizes.length === 2
-                      ? 'grid-cols-2 max-w-[240px]'
-                      : 'grid-cols-4'
-                }`}>
-                   {product.sizes.map(size => (
-                      <button 
-                        key={size} 
-                        onClick={() => setSelectedSize(size)}
-                        className={`py-3 border text-sm font-bold transition-all ${
-                          selectedSize === size 
-                            ? 'bg-white text-black border-white' 
-                            : 'bg-transparent text-white border-white/20 hover:border-white'
-                        }`}
-                      >
-                        {size}
-                      </button>
-                   ))}
-                </div>
 
-                {/* ТАБЛИЦА РАЗМЕРОВ */}
-                {product.hasSizeGuide && (
-                  product.id === "hat-sex" ? (
-                    // СПЕЦИАЛЬНАЯ ТАБЛИЦА ДЛЯ ШАПКИ
-                    <div className="mt-4 border border-white/20 overflow-x-auto">
-                      <table className="w-full text-xs text-left">
-                        <thead>
-                          <tr className="bg-zinc-900 border-b border-white/10">
-                            <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Размер</th>
-                            <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Обхват головы (см)</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                            <td className="py-3 px-4 font-bold font-mono">S</td>
-                            <td className="py-3 px-4 font-mono text-zinc-400">54–56</td>
-                          </tr>
-                          <tr className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                            <td className="py-3 px-4 font-bold font-mono">M</td>
-                            <td className="py-3 px-4 font-mono text-zinc-400">56–58</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <div className="p-4 bg-zinc-900/50 border-t border-white/5">
-                        <p className="text-[10px] text-zinc-600 uppercase tracking-wider leading-relaxed">
-                          Измерения указаны в сантиметрах. Допускается погрешность ±1 см.
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    // ОБЫЧНАЯ ТАБЛИЦА ДЛЯ ДЖИНСОВ
-                    <SizeGuide />
-                  )
-                )}
-             </div>
-          )}
           {/* КНОПКА */}
-          <div className="mb-4">
-             {!selectedSize ? (
-                <>
-                   <button 
-                     disabled 
-                     className="w-full py-5 bg-zinc-800 text-zinc-500 text-sm font-black uppercase tracking-[4px] cursor-not-allowed opacity-50"
-                   >
-                     {product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : "ДОБАВИТЬ В КОРЗИНУ"}
-                   </button>
-                   <p className="mt-2 text-[10px] text-red-500 text-center uppercase tracking-wider animate-pulse">
-                     Выберите размер для продолжения
-                   </p>
-                </>
-             ) : (
-                <AddToCartButton 
-                   productId={product.id}
-                   size={selectedSize ?? undefined}
-                   customText={product.isPreorder ? "ЗАБРОНИРОВАТЬ ПАРУ →" : undefined} 
-                />
-             )}
+          <div className="mt-7">
+            {selectedSize ? (
+              <AddToCartButton
+                productId={product.id}
+                size={selectedSize}
+                customText={product.isPreorder ? "Забронировать пару" : undefined}
+              />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  disabled
+                  className="w-full cursor-not-allowed bg-ink/10 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/40 md:py-5"
+                >
+                  Добавить в корзину
+                </button>
+                <p className="mt-2 text-center text-[9px] uppercase tracking-[0.14em] text-muted">
+                  Выберите размер, чтобы продолжить
+                </p>
+              </>
+            )}
           </div>
-          
-          <div className="mt-8 pt-6 border-t border-white/10 grid grid-cols-2 gap-4 text-[10px] font-mono text-zinc-600">
-            <div>МАТЕРИАЛ: {product.material ?? "100% COTTON"}</div>
-            <div>ПРОИЗВОДСТВО: RUSSIA</div>
-            <div>УХОД: 30°C MACHINE WASH</div>
-            <div>SKU: EVS-{product.id.toUpperCase().replace(/-/g, "")}</div>
+
+          {/* ДЕТАЛИ */}
+          <div className="mt-7 border-t border-line">
+            <details className="group/details border-b border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[10px] uppercase tracking-[0.16em]">
+                <span>Доставка и оплата</span>
+                <span className="text-[13px] transition-transform duration-300 group-open/details:rotate-45" aria-hidden>
+                  +
+                </span>
+              </summary>
+              <div className="space-y-2 pb-4 text-[12px] leading-relaxed text-muted">
+                <p>СДЭК и Почта России — 3–7 дней по стране. Бесплатно от 10 000 ₽.</p>
+                <p>Самовывоз в Калининграде — по предварительной договорённости.</p>
+                <p>Оплата картой онлайн через ЮKassa или наличными при самовывозе.</p>
+              </div>
+            </details>
+
+            <details className="group/details border-b border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[10px] uppercase tracking-[0.16em]">
+                <span>Возврат и обмен</span>
+                <span className="text-[13px] transition-transform duration-300 group-open/details:rotate-45" aria-hidden>
+                  +
+                </span>
+              </summary>
+              <div className="space-y-2 pb-4 text-[12px] leading-relaxed text-muted">
+                <p>7 дней с момента получения, если вещь не была в носке.</p>
+                <p>Сохранение товарного вида, бирок и упаковки обязательно.</p>
+              </div>
+            </details>
+
+            <details className="group/details border-b border-line">
+              <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-[10px] uppercase tracking-[0.16em]">
+                <span>Состав и уход</span>
+                <span className="text-[13px] transition-transform duration-300 group-open/details:rotate-45" aria-hidden>
+                  +
+                </span>
+              </summary>
+              <div className="space-y-2 pb-4 text-[12px] leading-relaxed text-muted">
+                <p>{product.material ?? "100% хлопок"}</p>
+                <p>Стирка при 30°C, без отбеливателей, сушить вдали от прямого солнца.</p>
+              </div>
+            </details>
           </div>
+
+          <dl className="mt-5 grid grid-cols-2 gap-x-4 gap-y-2 text-[9px] uppercase tracking-[0.12em] text-muted">
+            <div className="flex justify-between border-b border-line/70 pb-1.5">
+              <dt>Материал</dt>
+              <dd className="text-ink">{product.material ?? "100% COTTON"}</dd>
+            </div>
+            <div className="flex justify-between border-b border-line/70 pb-1.5">
+              <dt>Производство</dt>
+              <dd className="text-ink">Russia</dd>
+            </div>
+            <div className="flex justify-between border-b border-line/70 pb-1.5">
+              <dt>Коллекция</dt>
+              <dd className="text-ink">{collectionLabel(product.collection)}</dd>
+            </div>
+            <div className="flex justify-between border-b border-line/70 pb-1.5">
+              <dt>SKU</dt>
+              <dd className="text-ink">EVS-{product.id.toUpperCase().replace(/-/g, "")}</dd>
+            </div>
+          </dl>
         </div>
       </div>
 
-      {/* LOOKBOOK SECTION (ТОЛЬКО ДЛЯ SCHOOL JEANS) */}
+      {/* LOOKBOOK SCHOOL JEANS */}
       {product.id === "school-jeans" && (
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 py-24 border-t border-white/10">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-4">School Jeans Lookbook</h2>
-            <p className="text-zinc-500 font-mono text-sm uppercase tracking-widest">Complete The Set</p>
-          </div>
+        <section className="wrap mt-16 border-t border-line pt-10 md:mt-24 md:pt-14">
+          <SectionHead
+            eyebrow="School Jeans / Lookbook"
+            title="Собери комплект"
+            href="/catalog/school-jeans"
+            link="Конструктор образа"
+          />
 
-          <div className="w-full mb-24 relative group">
-            <Link href="/catalog/school-jeans" className="block relative aspect-[3/4] md:aspect-[16/9] w-full bg-zinc-900 overflow-hidden border border-white/10">
-              <Image src="/shool_jeans_glav.jpg" alt="School Jeans Full Look" fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700" />
-              <div className="absolute inset-0 flex items-end justify-center pb-8 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-t from-black/80 to-transparent">
-                <span className="bg-white text-black px-6 py-2 font-bold uppercase tracking-widest text-sm">Смотреть джинсы</span>
-              </div>
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            <Link href="/catalog/sex-shirt" className="group relative block aspect-[4/5] overflow-hidden bg-paper-2 md:aspect-[4/5]">
+              <Image
+                src="/sex_shirt.jpg"
+                alt="SEX Shirt"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+              <span className="absolute bottom-0 left-0 right-0 flex items-center justify-between bg-gradient-to-t from-ink/80 to-transparent p-4 pt-12 text-paper">
+                <span className="text-[10px] uppercase tracking-[0.16em]">SEX Shirt / Black</span>
+                <span className="text-[9px] uppercase tracking-[0.16em] text-paper/70">
+                  только в комплекте
+                </span>
+              </span>
             </Link>
-            <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Full Set Look</p>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-24 items-center">
-            <div className="relative group md:translate-y-12 md:-rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
-              <Link href="/catalog/sex-shirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
-                <Image src="/sex_shirt.jpg" alt="Sex Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
-                  <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Sex Shirt</p>
-                  <p className="text-zinc-300 text-[10px] uppercase tracking-widest mb-3">Только в комплекте</p>
-                  <span className="text-white text-xs font-bold border-b border-white pb-0.5">Купить комплект</span>
-                </div>
-              </Link>
-              <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Sex Shirt // Black</p>
-            </div>
-
-            <div className="relative group md:-translate-y-12 md:rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
-              <Link href="/catalog/el-shirt" className="block relative aspect-square w-full max-w-md mx-auto bg-zinc-900 border border-white/10 overflow-hidden">
-                <Image src="/el_shirt.jpg" alt="Log Shirt" fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm">
-                  <p className="text-white font-bold uppercase tracking-wider text-sm mb-1">Log Shirt</p>
-                  <p className="text-zinc-300 text-[10px] uppercase tracking-widest mb-3">Только в комплекте</p>
-                  <span className="text-white text-xs font-bold border-b border-white pb-0.5">Купить комплект</span>
-                </div>
-              </Link>
-              <p className="text-center mt-4 text-xs font-mono text-zinc-500 uppercase tracking-widest">Log Shirt // Black</p>
-            </div>
+            <Link href="/catalog/el-shirt" className="group relative block aspect-[4/5] overflow-hidden bg-paper-2 md:aspect-[4/5]">
+              <Image
+                src="/el_shirt.jpg"
+                alt="LOG Shirt"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+              />
+              <span className="absolute bottom-0 left-0 right-0 flex items-center justify-between bg-gradient-to-t from-ink/80 to-transparent p-4 pt-12 text-paper">
+                <span className="text-[10px] uppercase tracking-[0.16em]">LOG Shirt / Black</span>
+                <span className="text-[9px] uppercase tracking-[0.16em] text-paper/70">
+                  только в комплекте
+                </span>
+              </span>
+            </Link>
           </div>
-        </div>
+        </section>
       )}
 
-      {/* ПОХОЖИЕ ТОВАРЫ */}
-      {relatedProducts.length > 0 && (
-        <div className="w-full max-w-7xl mx-auto px-4 md:px-8 pb-24 mt-12 border-t border-white/10 pt-12">
-          <h3 className="text-xs font-mono text-zinc-500 uppercase tracking-[4px] mb-12 text-center">
-            Также может понравиться
-          </h3>
-          
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {relatedProducts.map((item) => (
-              <Link 
-                href={`/catalog/${item.id}`} 
-                key={item.id}
-                className="group block"
-              >
-                <div className="relative aspect-[3/4] w-full bg-zinc-900 overflow-hidden border border-white/5 mb-3">
-                  {item.images[0] && (
-                    <Image 
-                      src={item.images[0]} 
-                      alt={item.name}
-                      fill
-                      className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500"
-                    />
-                  )}
-                </div>
-                <h4 className="text-xs font-bold uppercase tracking-wide truncate group-hover:text-white text-zinc-400 transition-colors">
-                  {item.name}
-                </h4>
-                <p className="text-xs font-mono text-zinc-500 mt-1">
-                  {formatPrice(item.price)}
-                </p>
-              </Link>
+      {/* ПОХОЖИЕ */}
+      {suggested.length > 0 && (
+        <section className="wrap mt-16 md:mt-24">
+          <SectionHead eyebrow="Complete the look" title="С этим носят" href="/catalog" link="Весь магазин" />
+          <div className="mt-6 grid grid-cols-2 gap-x-3 gap-y-9 md:grid-cols-4 md:gap-x-5">
+            {suggested.map((item, index) => (
+              <ProductCard key={item.id} product={item} index={index} />
             ))}
           </div>
-        </div>
+        </section>
       )}
     </main>
   );

@@ -1,9 +1,14 @@
-"use client";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import Header from "@/_components/Header";
-import LikeButton from "@/_components/LikeButton";
+import CollectionHero from "@/_components/CollectionHero";
+import ProductCard from "@/_components/ProductCard";
 import { formatPrice, getProduct, type Product } from "@/lib/products";
+
+export const metadata: Metadata = {
+  title: "Winter 2.6",
+  description:
+    "Winter 2.6 — базовые вещи с графикой: худи TVAR, топы 18+ и плотный трикотаж.",
+};
 
 // Состав коллекции берём из общего каталога — цены и картинки не разъезжаются
 const winterItems = ["18-plus-w-evs-top", "18-plus-evs-top", "hoodie-tvar"]
@@ -11,49 +16,68 @@ const winterItems = ["18-plus-w-evs-top", "18-plus-evs-top", "hoodie-tvar"]
   .filter((product): product is Product => Boolean(product));
 
 export default function Winter26Collection() {
+  const total = winterItems.reduce((sum, product) => sum + product.price, 0);
+
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <Header />
+    <main>
+      <CollectionHero
+        title="WINTER 2.6"
+        tag="Essentials & graphics"
+        description="Капсула про холодный город: плотный трикотаж, графика и слои. Вещи, которые носят каждый день и не жалеют."
+        poster="/winter26-cover.jpg"
+        video="/winter26-bts.mp4"
+        year="2026"
+        count={winterItems.length}
+      />
 
-      {/* ВИДЕО-ФОН */}
-      <div className="relative w-full h-screen overflow-hidden">
-        <video
-          src="/winter26-bts.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          poster="/winter26-cover.jpg"
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
+      <section className="wrap py-9 md:py-12">
+        <div className="grid gap-8 border-b border-line pb-8 md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] md:items-start md:gap-16">
+          <div>
+            <p className="eyebrow text-muted">О капсуле</p>
+            <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted md:text-sm">
+              Winter 2.6 — продолжение зимней линейки. Здесь нет случайных
+              деталей: только плотные ткани, принты и крой, который держит форму
+              после десятков стирок.
+            </p>
+          </div>
 
-        <div className="absolute top-32 left-6 md:left-16 z-10 pointer-events-none">
-          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-[4px] mb-2">ESSENTIALS & GRAPHICS</p>
-          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">WINTER 2.6</h1>
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-[9px] uppercase tracking-[0.14em] text-muted md:grid-cols-3">
+            <div>
+              <dt>Сезон</dt>
+              <dd className="mt-1 text-ink">2026</dd>
+            </div>
+            <div>
+              <dt>Вещей</dt>
+              <dd className="mt-1 text-ink">{winterItems.length}</dd>
+            </div>
+            <div>
+              <dt>Комплект</dt>
+              <dd className="mt-1 text-ink">{formatPrice(total)}</dd>
+            </div>
+          </dl>
         </div>
-      </div>
 
-      {/* СЕТКА ТОВАРОВ */}
-      <div className="flex-grow px-6 py-16 max-w-7xl mx-auto w-full relative z-20 -mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {winterItems.map((product) => (
-            <Link href={`/catalog/${product.id}`} key={product.id} className="group block cursor-pointer">
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-900 mb-4 border border-white/5 hover:border-white/20 transition-colors">
-                <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 768px) 100vw, 25vw" className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100" />
-                <div className="absolute top-3 right-3 z-20" onClick={(e) => e.stopPropagation()}>
-                  <LikeButton id={product.id} type="product" title={product.name} image={product.images[0]} price={formatPrice(product.price)} description={product.description} size="sm" />
-                </div>
-              </div>
-              <div className="flex justify-between items-end border-b border-white/10 pb-2 group-hover:border-white/30 transition-colors">
-                <h3 className="text-xs font-bold uppercase tracking-wider truncate pr-2">{product.name}</h3>
-                <span className="text-xs font-mono text-zinc-400">{formatPrice(product.price)}</span>
-              </div>
-            </Link>
+        <div className="mt-7 grid grid-cols-2 gap-x-3 gap-y-9 md:mt-9 md:grid-cols-3 md:gap-x-5">
+          {winterItems.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} priority={index < 2} />
           ))}
         </div>
-      </div>
+
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
+          <span className="text-[9px] uppercase tracking-[0.18em] text-muted">
+            Капсула 03 / Winter 2.6
+          </span>
+          <Link
+            href="/catalog"
+            className="group inline-flex items-center gap-4 border-b border-ink pb-1.5 text-[10px] uppercase tracking-[0.18em]"
+          >
+            Весь магазин
+            <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+              →
+            </span>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

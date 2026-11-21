@@ -1,77 +1,82 @@
-"use client";
-import Image from "next/image";
+import type { Metadata } from "next";
 import Link from "next/link";
-import Header from "@/_components/Header";
-import LikeButton from "@/_components/LikeButton";
+import CollectionHero from "@/_components/CollectionHero";
+import ProductCard from "@/_components/ProductCard";
+import { getProduct, type Product } from "@/lib/products";
 
-const vladItems = [
-  { 
-    id: "vlad-tee", 
-    name: "VLAD DROBYSHEV // TEE", 
-    price: "4 500 ₽", 
-    image: "/vlad-tee-front.jpg", 
-    description: "Футболка из коллекции, посвященной Владу." 
-  },
-  { 
-    id: "vlad-ls", 
-    name: "VLAD DROBYSHEV // LONGSLEEVE", 
-    price: "5 900 ₽", 
-    image: "/vlad-ls-front.jpg", 
-    description: "Лонгслив с уникальным принтом." 
-  },
-  { 
-    id: "vlad-cape", 
-    name: "VLAD DROBYSHEV // CAPE", 
-    price: "7 500 ₽", 
-    image: "/vlad-cape-front.jpg", 
-    description: "Накидка для завершения образа." 
-  },
-];
+export const metadata: Metadata = {
+  title: "Влад Дробышев",
+  description:
+    "Капсула, посвящённая Владу Дробышеву: футболка, лонгслив и накидка в одном образе.",
+};
+
+const itemIds = ["vlad-tee", "vlad-ls", "vlad-cape"];
+
+const items = itemIds
+  .map((id) => getProduct(id))
+  .filter((product): product is Product => Boolean(product));
 
 export default function VladDrobyshevCollection() {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <Header />
-      
-      {/* ВИДЕО-ФОН КОЛЛЕКЦИИ */}
-      <div className="relative w-full h-screen overflow-hidden">
-        <video 
-          src="/1116.mp4" 
-          autoPlay 
-          loop 
-          muted 
-          playsInline 
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent pointer-events-none" />
-        
-        <div className="absolute top-32 left-6 md:left-16 z-10 pointer-events-none">
-          <p className="text-[10px] font-mono text-zinc-400 uppercase tracking-[4px] mb-2">DEDICATED TO A FRIEND</p>
-          <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
-            ВЛАД ДРОБЫШЕВ
-          </h1>
-        </div>
-      </div>
+    <main>
+      <CollectionHero
+        title="ВЛАД ДРОБЫШЕВ"
+        tag="Dedicated to a friend"
+        description="Капсула, собранная вокруг одного человека и одного образа. Футболка, лонгслив и накидка — три слоя, которые работают только вместе."
+        poster="/vlad-drobyshev-cover.jpg"
+        video="/1116.mp4"
+        year="2025"
+        count={items.length}
+      />
 
-      {/* СЕТКА ТОВАРОВ */}
-      <div className="flex-grow px-6 py-16 max-w-7xl mx-auto w-full relative z-20 -mt-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-12">
-          {vladItems.map((product) => (
-            <Link href={`/catalog/${product.id}`} key={product.id} className="group block cursor-pointer">
-              <div className="relative aspect-[3/4] w-full overflow-hidden bg-zinc-900 mb-4 border border-white/5 hover:border-white/20 transition-colors">
-                <Image src={product.image} alt={product.name} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 group-hover:opacity-100" />
-                <div className="absolute top-3 right-3 z-20" onClick={(e) => e.stopPropagation()}>
-                  <LikeButton id={product.id} type="product" title={product.name} image={product.image} price={product.price} description={product.description} size="sm" />
-                </div>
-              </div>
-              <div className="flex justify-between items-end border-b border-white/10 pb-2 group-hover:border-white/30 transition-colors">
-                <h3 className="text-xs font-bold uppercase tracking-wider truncate pr-2">{product.name}</h3>
-                <span className="text-xs font-mono text-zinc-400">{product.price}</span>
-              </div>
-            </Link>
+      <section className="wrap py-9 md:py-12">
+        <div className="grid gap-8 border-b border-line pb-8 md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] md:items-start md:gap-16">
+          <div>
+            <p className="eyebrow text-muted">О капсуле</p>
+            <p className="mt-4 max-w-xl text-[13px] leading-relaxed text-muted md:text-sm">
+              Дружба — это тоже материал. Капсула выросла из личной истории и
+              стала отдельным высказыванием: агрессивный принт, свободный крой и
+              накидка, которая закрывает образ.
+            </p>
+          </div>
+
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-[9px] uppercase tracking-[0.14em] text-muted md:grid-cols-3">
+            <div>
+              <dt>Сезон</dt>
+              <dd className="mt-1 text-ink">2025</dd>
+            </div>
+            <div>
+              <dt>Вещей</dt>
+              <dd className="mt-1 text-ink">{items.length}</dd>
+            </div>
+            <div>
+              <dt>Статус</dt>
+              <dd className="mt-1 text-ink">Available</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="mt-7 grid grid-cols-2 gap-x-3 gap-y-9 md:mt-9 md:grid-cols-3 md:gap-x-5">
+          {items.map((product, index) => (
+            <ProductCard key={product.id} product={product} index={index} priority={index < 2} />
           ))}
         </div>
-      </div>
+
+        <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
+          <span className="text-[9px] uppercase tracking-[0.18em] text-muted">
+            Капсула 02 / Vlad Drobyshev
+          </span>
+          <Link
+            href="/catalog"
+            className="group inline-flex items-center gap-4 border-b border-ink pb-1.5 text-[10px] uppercase tracking-[0.18em]"
+          >
+            Весь магазин
+            <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+              →
+            </span>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }

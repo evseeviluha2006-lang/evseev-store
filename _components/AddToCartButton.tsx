@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 import { addToCart } from "@/lib/cart";
 import { getProduct } from "@/lib/products";
@@ -7,12 +8,14 @@ type AddToCartButtonProps = {
   productId: string;
   size?: string;
   customText?: string;
+  className?: string;
 };
 
 export default function AddToCartButton({
   productId,
   size = "",
   customText,
+  className = "",
 }: AddToCartButtonProps) {
   const [isAdded, setIsAdded] = useState(false);
 
@@ -20,7 +23,7 @@ export default function AddToCartButton({
     const product = getProduct(productId);
 
     if (!product) {
-      console.error(`❌ Товар ${productId} не найден в каталоге`);
+      console.error(`Товар ${productId} не найден в каталоге`);
       return;
     }
 
@@ -34,15 +37,17 @@ export default function AddToCartButton({
 
   return (
     <button
+      type="button"
       onClick={handleAdd}
       disabled={isAdded}
-      className={`w-full py-5 text-sm font-black uppercase tracking-[4px] transition-all duration-300 border ${
+      className={`flex w-full items-center justify-center gap-3 py-4 text-[11px] font-medium uppercase tracking-[0.2em] transition-colors duration-300 md:py-5 ${
         isAdded
-          ? "bg-green-600 border-green-600 text-white cursor-default"
-          : "bg-white border-white text-black hover:bg-zinc-200"
-      }`}
+          ? "cursor-default bg-paper text-ink"
+          : "bg-ink text-paper hover:bg-paper hover:text-ink"
+      } ${className}`}
     >
-      {isAdded ? "ДОБАВЛЕНО ✓" : (customText || "ДОБАВИТЬ В КОРЗИНУ →")}
+      {isAdded ? "Добавлено ✓" : customText || "Добавить в корзину"}
+      {!isAdded && <span aria-hidden>→</span>}
     </button>
   );
 }

@@ -1,52 +1,62 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Header from "@/_components/Header";
 
 export const metadata: Metadata = {
-  title: "Заказ оплачен — EVSEEV",
+  title: "Заказ оплачен",
   description: "Спасибо за заказ в EVSEEV.",
   robots: { index: false, follow: false },
 };
 
 export default function SuccessPage() {
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <Header />
-
-      <div className="flex-grow flex items-center justify-center px-6 py-32">
-        <div className="text-center max-w-lg border border-white/10 bg-zinc-900/30 p-10 md:p-14">
-          <span className="inline-flex items-center justify-center w-14 h-14 rounded-full border border-green-500 text-green-500 text-2xl mb-8">
+    <main className="wrap flex min-h-[68vh] items-center justify-center py-16">
+      <div className="w-full max-w-xl border-t border-ink pt-7">
+        <div className="flex items-center justify-between gap-4">
+          <p className="eyebrow text-muted">Order confirmed</p>
+          <span className="grid h-10 w-10 place-items-center rounded-full border border-ink bg-paper text-[14px] text-ink">
             ✓
           </span>
-
-          <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight mb-4">
-            Оплата прошла
-          </h1>
-
-          <p className="text-zinc-400 text-sm md:text-base leading-relaxed mb-8">
-            Спасибо за заказ! Я получил уведомление и свяжусь с тобой
-            для подтверждения деталей доставки.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link
-              href="/catalog"
-              className="flex-1 py-4 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors"
-            >
-              В каталог
-            </Link>
-            <Link
-              href="/"
-              className="flex-1 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-white/5 transition-colors"
-            >
-              На главную
-            </Link>
-          </div>
-
-          <p className="mt-8 text-[10px] text-zinc-600 uppercase tracking-widest">
-            Если оплата списалась, а заказ не подтвердился — напиши в Telegram
-          </p>
         </div>
+
+        <h1 className="display mt-6 text-[clamp(2.6rem,7vw,5.2rem)]">
+          СПАСИБО
+          <br />
+          ЗА ЗАКАЗ
+        </h1>
+
+        <p className="mt-5 max-w-md text-[13px] leading-relaxed text-muted">
+          Оплата прошла. Я получил уведомление и свяжусь с тобой для
+          подтверждения деталей доставки — обычно в течение пары часов.
+        </p>
+
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+          <Link
+            href="/catalog"
+            className="flex flex-1 items-center justify-between gap-5 bg-ink px-6 py-4 text-[10px] font-medium uppercase tracking-[0.18em] text-paper transition-colors hover:bg-paper hover:text-ink"
+          >
+            В магазин
+            <span aria-hidden>→</span>
+          </Link>
+          <Link
+            href="/"
+            className="flex flex-1 items-center justify-between gap-5 border border-ink px-6 py-4 text-[10px] font-medium uppercase tracking-[0.18em] transition-colors hover:bg-ink hover:text-paper"
+          >
+            На главную
+            <span aria-hidden>↗</span>
+          </Link>
+        </div>
+
+        <p className="mt-6 border-t border-line pt-4 text-[9px] uppercase leading-relaxed tracking-[0.13em] text-muted">
+          Если оплата списалась, а заказ не подтвердился — напиши в Telegram{" "}
+          <a
+            href="https://t.me/evs_clo"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-ink underline underline-offset-4"
+          >
+            @evs_clo
+          </a>
+        </p>
       </div>
     </main>
   );

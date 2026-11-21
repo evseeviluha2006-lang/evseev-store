@@ -1,72 +1,91 @@
 "use client";
+
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Header from "@/_components/Header";
 
 export default function CreativityPage() {
   const [clicked, setClicked] = useState(false);
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <Header />
-      
-      <div className="flex-grow flex flex-col items-center justify-center px-6 py-20 relative overflow-hidden">
-        
-        <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-           <Image 
-             src="/distress-cover.jpg" 
-             alt="Art Cover" 
-             fill 
-             className="object-cover grayscale blur-sm" 
-           />
-           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent" />
-        </div>
+    <main>
+      <section className="wrap grid gap-6 pt-8 pb-4 md:grid-cols-2 md:gap-12 md:pt-12">
+        <div className="flex flex-col justify-center md:py-10">
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="eyebrow text-muted">Studio / Coming soon</p>
+            <span className="border border-ink bg-paper px-2.5 py-1 text-[8px] uppercase tracking-[0.16em] text-ink">
+              В разработке
+            </span>
+          </div>
 
-        <div className="relative z-10 max-w-2xl w-full text-center border border-white/10 bg-zinc-900/50 backdrop-blur-md p-8 md:p-12">
-          
-          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter mb-6">
-            ТВОРЧЕСТВО & КАРТИНЫ
+          <h1 className="display mt-5 text-[clamp(2.8rem,7.5vw,6.5rem)]">
+            ТВОРЧЕСТВО
+            <br />
+            И КАРТИНЫ
           </h1>
-          
-          <p className="text-sm md:text-base text-zinc-400 leading-relaxed mb-8 font-mono">
-            Этот раздел находится в активной разработке.<br/>
-            Здесь скоро появятся записи из моей книжки, эскизы и архивные работы.
+
+          <p className="mt-5 max-w-md text-[13px] leading-relaxed text-muted">
+            Этот раздел в активной разработке. Здесь появятся записи из книжки,
+            эскизы, эксперименты с формой и архивные работы, которые не вошли в
+            коллекции.
           </p>
 
-          <div className="border-t border-white/10 pt-8 mt-8">
-            <p className="text-xs uppercase tracking-[4px] text-zinc-500 mb-4">
-              Ваше влияние на процесс
-            </p>
-            
-            <button 
+          <div className="mt-8 border-t border-line pt-6">
+            <p className="eyebrow text-muted">Ваше влияние на процесс</p>
+
+            <button
+              type="button"
               onClick={() => setClicked(true)}
               disabled={clicked}
-              className={`px-8 py-4 text-xs font-bold uppercase tracking-widest transition-all duration-300 border ${
-                clicked 
-                  ? "bg-green-600 border-green-600 text-white cursor-default" 
-                  : "bg-white text-black hover:bg-zinc-200 hover:scale-105"
+              className={`mt-4 flex w-fit items-center gap-4 px-6 py-4 text-[10px] font-medium uppercase tracking-[0.18em] transition-colors ${
+                clicked
+                  ? "cursor-default bg-paper text-ink"
+                  : "bg-ink text-paper hover:bg-paper hover:text-ink"
               }`}
             >
-              {clicked ? "АКТИВНОСТЬ ПОКАЗАНА ✓" : "ПОКАЗАТЬ АКТИВНОСТЬ →"}
+              {clicked ? "Активность показана ✓" : "Показать активность"}
+              {!clicked && <span aria-hidden>→</span>}
             </button>
 
-            {clicked && (
-              <p className="mt-6 text-sm text-white animate-pulse">
-                Илья Евсеев получил сигнал. Раздел будет готов как можно скорее.
-              </p>
-            )}
+            <p
+              className={`mt-3 text-[10px] uppercase tracking-[0.12em] text-muted transition-opacity ${
+                clicked ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              Илья Евсеев получил сигнал. Раздел будет готов как можно скорее.
+            </p>
           </div>
         </div>
 
-        <Link 
-          href="/catalog" 
-          className="mt-12 text-[10px] text-zinc-600 uppercase tracking-widest hover:text-white transition-colors z-10"
+        <div className="relative aspect-[4/5] w-full overflow-hidden bg-paper-2 md:aspect-auto md:min-h-[560px]">
+          <Image
+            src="/education-3.jpg"
+            alt="Рабочий процесс в студии EVSEEV"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover grayscale"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-transparent to-transparent" />
+          <span className="absolute bottom-3 left-3 bg-paper px-3 py-1.5 text-[9px] uppercase tracking-[0.16em]">
+            Sketchbook / 2026
+          </span>
+        </div>
+      </section>
+
+      <section className="wrap mt-4 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-5">
+        <p className="text-[9px] uppercase tracking-[0.16em] text-muted">
+          Пока здесь пусто — но недолго
+        </p>
+        <Link
+          href="/catalog"
+          className="group inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.18em]"
         >
           Вернуться к товарам
+          <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+            →
+          </span>
         </Link>
-
-      </div>
+      </section>
     </main>
   );
 }

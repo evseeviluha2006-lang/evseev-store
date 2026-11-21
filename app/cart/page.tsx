@@ -1,7 +1,7 @@
 "use client";
+
 import Image from "next/image";
 import Link from "next/link";
-import Header from "@/_components/Header";
 import { countCartItems, useCartLines, writeCart } from "@/lib/cart";
 import { computeTotals, formatPrice, MAX_QUANTITY, type CartLine } from "@/lib/products";
 import { useIsClient } from "@/lib/use-is-client";
@@ -18,12 +18,8 @@ export default function CartPage() {
     const target = lines.find((line) => line.id === id && line.size === oldSize);
     if (!target) return;
 
-    const without = lines.filter(
-      (line) => !(line.id === id && line.size === oldSize)
-    );
-    const existing = without.find(
-      (line) => line.id === id && line.size === newSize
-    );
+    const without = lines.filter((line) => !(line.id === id && line.size === oldSize));
+    const existing = without.find((line) => line.id === id && line.size === newSize);
 
     const next = existing
       ? without.map((line) =>
@@ -44,10 +40,7 @@ export default function CartPage() {
       line.id === id && line.size === size
         ? {
             ...line,
-            quantity: Math.min(
-              MAX_QUANTITY,
-              Math.max(1, line.quantity + delta)
-            ),
+            quantity: Math.min(MAX_QUANTITY, Math.max(1, line.quantity + delta)),
           }
         : line
     );
@@ -72,149 +65,230 @@ export default function CartPage() {
   if (!isClient) return null;
 
   return (
-    <main className="min-h-screen bg-black text-white flex flex-col">
-      <Header />
+    <main>
+      <section className="wrap pt-10 pb-6 md:pt-16 md:pb-8">
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-5">
+          <div>
+            <p className="eyebrow text-muted">Cart / {totalItems} items</p>
+            <h1 className="display mt-4 text-[clamp(2.6rem,7.5vw,6rem)]">КОРЗИНА</h1>
+          </div>
+          <Link
+            href="/catalog"
+            className="group mb-1 inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink"
+          >
+            <span className="transition-transform duration-300 group-hover:-translate-x-1" aria-hidden>
+              ←
+            </span>
+            Продолжить покупки
+          </Link>
+        </div>
+      </section>
 
-      <div className="pt-32 pb-10 px-6 max-w-4xl mx-auto w-full min-h-[50vh]">
-        <h1 className="text-lg font-bold tracking-[8px] uppercase mb-12 text-center md:text-left">
-          КОРЗИНА ({totalItems})
-        </h1>
-
-        {totals.items.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-40 border border-white/10 bg-zinc-900/30">
-            <p className="text-zinc-500 uppercase tracking-widest mb-6 text-sm">Корзина пуста</p>
+      {totals.items.length === 0 ? (
+        <section className="wrap pb-8">
+          <div className="flex min-h-[360px] flex-col items-center justify-center border border-line px-6 py-20 text-center">
+            <p className="eyebrow text-muted">Empty</p>
+            <h2 className="display-sm mt-4 text-[clamp(2rem,5vw,3.6rem)]">ПОКА ПУСТО</h2>
+            <p className="mt-4 max-w-sm text-[13px] leading-relaxed text-muted">
+              В корзине нет вещей. Начните с новой капсулы или архивных моделей.
+            </p>
             <Link
               href="/catalog"
-              className="px-6 py-3 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors"
+              className="mt-7 bg-ink px-7 py-4 text-[10px] font-medium uppercase tracking-[0.18em] text-paper transition-colors hover:bg-paper hover:text-ink"
             >
-              Перейти в каталог
+              Перейти в магазин
             </Link>
           </div>
-        ) : (
-          <div className="space-y-6">
+        </section>
+      ) : (
+        <section className="wrap grid gap-10 pb-6 lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-14">
+          {/* ТОВАРЫ */}
+          <div>
             {totals.items.map((item) => (
               <div
                 key={`${item.id}-${item.size}`}
-                className="group flex gap-6 p-4 border border-white/10 bg-zinc-900/30 hover:border-white/20 transition-colors"
+                className="grid grid-cols-[84px_minmax(0,1fr)] items-start gap-4 border-t border-line py-5 md:grid-cols-[104px_minmax(0,1fr)_130px_32px] md:items-center md:gap-5"
               >
-                <div className="relative w-24 h-32 bg-zinc-900 flex-shrink-0 overflow-hidden border border-white/5">
+                <Link
+                  href={`/catalog/${item.id}`}
+                  className="relative aspect-[3/4] w-full overflow-hidden bg-paper-2"
+                >
                   <Image
                     src={item.product.images[0]}
                     alt={item.product.name}
                     fill
-                    sizes="96px"
-                    className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                    sizes="110px"
+                    className="object-cover transition-transform duration-500 hover:scale-105"
                   />
+                </Link>
+
+                <div className="min-w-0">
+                  <Link
+                    href={`/catalog/${item.id}`}
+                    className="text-[11px] font-medium uppercase leading-snug tracking-[0.05em] hover:text-muted md:text-[12px]"
+                  >
+                    {item.product.name}
+                  </Link>
+
+                  {item.product.sizes.length > 0 ? (
+                    <label className="mt-2 inline-flex items-center gap-2 text-[9px] uppercase tracking-[0.14em] text-muted">
+                      <span className="sr-only">Размер</span>
+                      <select
+                        value={item.size}
+                        onChange={(event) => setSize(item.id, item.size, event.target.value)}
+                        className={`cursor-pointer border-b bg-transparent py-1 pr-4 text-[9px] uppercase tracking-[0.14em] outline-none ${
+                          item.size ? "border-line text-ink" : "border-ink text-ink"
+                        }`}
+                      >
+                        <option value="" disabled>
+                          Выбрать размер
+                        </option>
+                        {item.product.sizes.map((size) => (
+                          <option key={size} value={size}>
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  ) : (
+                    <p className="mt-2 text-[9px] uppercase tracking-[0.14em] text-muted">
+                      ONE SIZE
+                    </p>
+                  )}
+
+                  <p className="mt-2 text-[11px] tabular-nums text-muted md:hidden">
+                    {formatPrice(item.product.price * item.quantity)}
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={() => removeItem(item.id, item.size)}
+                    className="mt-2 text-[9px] uppercase tracking-[0.14em] text-muted underline-offset-4 hover:text-ink hover:underline md:hidden"
+                  >
+                    Удалить
+                  </button>
                 </div>
 
-                <div className="flex-grow flex flex-col justify-between py-1">
-                  <div>
-                    <h3 className="text-sm font-bold uppercase tracking-wider mb-1">
-                      {item.product.name}
-                    </h3>
-                    {item.size ? (
-                      <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1">
-                        Размер: {item.size}
-                      </p>
-                    ) : item.product.sizes.length > 0 ? (
-                      <div className="mb-2">
-                        <p className="text-[10px] uppercase tracking-widest text-red-400 mb-1">
-                          Выберите размер
-                        </p>
-                        <div className="flex flex-wrap gap-1">
-                          {item.product.sizes.map((size) => (
-                            <button
-                              key={size}
-                              onClick={() => setSize(item.id, "", size)}
-                              className="px-2 py-1 border border-white/20 text-[10px] font-bold uppercase hover:bg-white hover:text-black transition-colors"
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-                    <p className="text-xs font-mono text-zinc-400 font-numbers">
-                      {formatPrice(item.product.price)}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center border border-white/20">
-                      <button
-                        onClick={() => updateQuantity(item.id, item.size, -1)}
-                        aria-label="Уменьшить количество"
-                        className="h-10 w-10 flex items-center justify-center text-sm hover:bg-white/10 transition-colors"
-                      >
-                        -
-                      </button>
-                      <span className="h-10 px-3 text-xs font-mono border-x border-white/20 min-w-[40px] flex items-center justify-center font-numbers">
-                        {item.quantity}
-                      </span>
-                      <button
-                        onClick={() => updateQuantity(item.id, item.size, 1)}
-                        aria-label="Увеличить количество"
-                        className="h-10 w-10 flex items-center justify-center text-sm hover:bg-white/10 transition-colors"
-                      >
-                        +
-                      </button>
-                    </div>
-
+                <div className="col-span-2 flex items-center justify-between md:col-span-1 md:justify-start">
+                  <div className="flex items-center border border-line">
                     <button
-                      onClick={() => removeItem(item.id, item.size)}
-                      aria-label={`Удалить ${item.product.name}`}
-                      className="py-2.5 -my-2.5 px-1 -mr-1 text-[10px] text-zinc-500 uppercase tracking-widest hover:text-red-500 transition-colors"
+                      type="button"
+                      onClick={() => updateQuantity(item.id, item.size, -1)}
+                      aria-label="Уменьшить количество"
+                      className="grid h-9 w-9 place-items-center text-[13px] transition-colors hover:bg-ink hover:text-paper"
                     >
-                      Удалить
+                      −
+                    </button>
+                    <span className="grid h-9 w-9 place-items-center border-x border-line text-[11px] tabular-nums">
+                      {item.quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => updateQuantity(item.id, item.size, 1)}
+                      aria-label="Увеличить количество"
+                      className="grid h-9 w-9 place-items-center text-[13px] transition-colors hover:bg-ink hover:text-paper"
+                    >
+                      +
                     </button>
                   </div>
+
+                  <div className="hidden text-[12px] tabular-nums md:block">
+                    {formatPrice(item.product.price * item.quantity)}
+                  </div>
                 </div>
+
+                <div className="hidden text-right md:block">
+                  <div className="text-[12px] tabular-nums">
+                    {formatPrice(item.product.price * item.quantity)}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => removeItem(item.id, item.size)}
+                  aria-label={`Удалить ${item.product.name}`}
+                  className="hidden h-8 w-8 place-items-center text-muted transition-colors hover:text-ink md:grid"
+                >
+                  ×
+                </button>
               </div>
             ))}
 
-            <div className="pt-8 border-t border-white/10 mt-8">
+            <div className="flex items-center justify-between border-t border-line pt-4">
+              <span className="text-[9px] uppercase tracking-[0.16em] text-muted">
+                {totalItems} поз. в корзине
+              </span>
+              <button
+                type="button"
+                onClick={clearCart}
+                className="text-[9px] uppercase tracking-[0.16em] text-muted underline-offset-4 hover:text-ink hover:underline"
+              >
+                Очистить корзину
+              </button>
+            </div>
+          </div>
+
+          {/* ИТОГ */}
+          <aside className="h-fit border border-ink bg-paper-2/40 p-6 lg:sticky lg:top-[96px] md:p-7">
+            <p className="eyebrow text-muted">Order summary</p>
+            <h2 className="display-sm mt-3 text-[26px]">ИТОГО</h2>
+
+            <dl className="mt-6 space-y-3 border-t border-line pt-5 text-[11px]">
+              <div className="flex justify-between gap-4">
+                <dt className="uppercase tracking-[0.12em] text-muted">Подытог</dt>
+                <dd className="tabular-nums">{formatPrice(totals.subtotal)}</dd>
+              </div>
+
               {totals.discount > 0 && (
-                <div className="flex justify-between items-center mb-3 text-sm">
-                  <span className="text-green-500 uppercase tracking-widest text-xs">
-                    Скидка за комплект −15%
-                  </span>
-                  <span className="font-mono text-green-500 font-numbers">
-                    −{formatPrice(totals.discount)}
-                  </span>
+                <div className="flex justify-between gap-4 bg-ink px-2 py-1.5 text-paper">
+                  <dt className="uppercase tracking-[0.12em]">Комплект −15%</dt>
+                  <dd className="tabular-nums">−{formatPrice(totals.discount)}</dd>
                 </div>
               )}
 
-              <div className="flex justify-between items-end mb-8">
-                <span className="text-sm uppercase tracking-widest text-zinc-400">Итого:</span>
-                <span className="text-2xl font-black font-mono font-numbers">
-                  {formatPrice(totals.total)}
-                </span>
+              <div className="flex justify-between gap-4">
+                <dt className="uppercase tracking-[0.12em] text-muted">Доставка</dt>
+                <dd className="text-right text-[10px] uppercase tracking-[0.08em] text-muted">
+                  рассчитаем при оформлении
+                </dd>
               </div>
+            </dl>
 
-              <div className="flex gap-4">
-                {hasMissingSize ? (
-                  <span className="flex-grow py-4 bg-zinc-800 text-zinc-500 text-xs font-bold uppercase tracking-widest text-center flex items-center justify-center cursor-not-allowed">
-                    ВЫБЕРИТЕ РАЗМЕР
-                  </span>
-                ) : (
-                  <Link
-                    href="/checkout"
-                    className="flex-grow py-4 bg-white text-black text-xs font-bold uppercase tracking-widest hover:bg-zinc-200 transition-colors text-center flex items-center justify-center"
-                  >
-                    ОФОРМИТЬ ЗАКАЗ
-                  </Link>
-                )}
-                <button
-                  onClick={clearCart}
-                  className="px-6 py-4 border border-white/20 text-xs font-bold uppercase tracking-widest hover:bg-red-600 hover:border-red-600 hover:text-white transition-colors"
-                >
-                  ОЧИСТИТЬ
-                </button>
-              </div>
+            <div className="mt-4 flex items-end justify-between border-t border-ink pt-4">
+              <span className="text-[10px] uppercase tracking-[0.16em]">К оплате</span>
+              <span className="text-[24px] leading-none tabular-nums">{formatPrice(totals.total)}</span>
             </div>
-          </div>
-        )}
-      </div>
+
+            {hasMissingSize ? (
+              <span className="mt-5 flex cursor-not-allowed items-center justify-center bg-ink/10 py-4 text-[10px] font-medium uppercase tracking-[0.18em] text-ink/40">
+                Выберите размер
+              </span>
+            ) : (
+              <Link
+                href="/checkout"
+                className="group mt-5 flex items-center justify-between gap-6 bg-ink px-6 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:bg-paper hover:text-ink"
+              >
+                Оформить заказ
+                <span className="transition-transform duration-300 group-hover:translate-x-1" aria-hidden>
+                  →
+                </span>
+              </Link>
+            )}
+
+            {hasMissingSize && (
+              <p className="mt-2 text-[9px] uppercase tracking-[0.12em] text-muted">
+                У одной из вещей не выбран размер
+              </p>
+            )}
+
+            <div className="mt-6 space-y-2 border-t border-line pt-4 text-[9px] uppercase tracking-[0.14em] text-muted">
+              <p>Оплата картой через ЮKassa</p>
+              <p>Доставка СДЭК / Почта России</p>
+              <p>Возврат в течение 7 дней</p>
+            </div>
+          </aside>
+        </section>
+      )}
     </main>
   );
 }

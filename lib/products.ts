@@ -276,6 +276,25 @@ export function formatPrice(value: number): string {
   return `${rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0")} ₽`;
 }
 
+export type ProductCategory = "tops" | "bottoms" | "outerwear" | "accessories";
+
+export const productCategories: { id: ProductCategory | "all"; label: string }[] = [
+  { id: "all", label: "ВСЁ" },
+  { id: "tops", label: "ВЕРХ" },
+  { id: "bottoms", label: "НИЗ" },
+  { id: "outerwear", label: "ВЕРХНЯЯ ОДЕЖДА" },
+  { id: "accessories", label: "АКСЕССУАРЫ" },
+];
+
+/** Категория выводится из названия и коллекции, чтобы не дублировать данные в каталоге. */
+export function getProductCategory(product: Product): ProductCategory {
+  if (product.collection === "accessories") return "accessories";
+  if (/(ШАПКА|HAT|CAP)/i.test(product.name)) return "accessories";
+  if (/(PANTS|JEANS|ШТАНЫ|БРЮКИ)/i.test(product.name)) return "bottoms";
+  if (/(JACKET|CAPE|КУРТКА|НАКИДКА)/i.test(product.name)) return "outerwear";
+  return "tops";
+}
+
 /**
  * Считает итоги корзины по каталогу.
  * Одна и та же функция используется для витрины, корзины и серверного платежа,

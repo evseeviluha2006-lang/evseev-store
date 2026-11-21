@@ -1,8 +1,9 @@
 "use client";
+
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Header from "@/_components/Header";
 import SizeGuide from "@/_components/SizeGuide";
 import { writeCart } from "@/lib/cart";
 import { computeTotals, formatPrice, getProduct, type CartLine } from "@/lib/products";
@@ -22,8 +23,9 @@ export default function SchoolJeansPage() {
   const sexShirt = getProduct("sex-shirt");
   const elShirt = getProduct("el-shirt");
 
-  // Предпросмотр цены считается тем же кодом, что и на сервере
-  const previewLines: CartLine[] = [{ id: "school-jeans", size: selectedSize ?? "M", quantity: 1 }];
+  const previewLines: CartLine[] = [
+    { id: "school-jeans", size: selectedSize ?? "M", quantity: 1 },
+  ];
   if (lookSelected.sexShirt) previewLines.push({ id: "sex-shirt", size: selectedSize ?? "M", quantity: 1 });
   if (lookSelected.elShirt) previewLines.push({ id: "el-shirt", size: selectedSize ?? "M", quantity: 1 });
   const preview = computeTotals(previewLines);
@@ -34,15 +36,9 @@ export default function SchoolJeansPage() {
       return;
     }
 
-    const lines: CartLine[] = [
-      { id: "school-jeans", size: selectedSize, quantity: 1 },
-    ];
-    if (lookSelected.sexShirt) {
-      lines.push({ id: "sex-shirt", size: selectedSize, quantity: 1 });
-    }
-    if (lookSelected.elShirt) {
-      lines.push({ id: "el-shirt", size: selectedSize, quantity: 1 });
-    }
+    const lines: CartLine[] = [{ id: "school-jeans", size: selectedSize, quantity: 1 }];
+    if (lookSelected.sexShirt) lines.push({ id: "sex-shirt", size: selectedSize, quantity: 1 });
+    if (lookSelected.elShirt) lines.push({ id: "el-shirt", size: selectedSize, quantity: 1 });
 
     writeCart(lines);
     router.push("/checkout");
@@ -52,151 +48,226 @@ export default function SchoolJeansPage() {
     setLookSelected((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const lookItems = [
+    { key: "jeans" as const, name: "SCHOOL JEANS", product: jeans, active: true },
+    { key: "sexShirt" as const, name: "SEX SHIRT", product: sexShirt, active: lookSelected.sexShirt },
+    { key: "elShirt" as const, name: "LOG SHIRT", product: elShirt, active: lookSelected.elShirt },
+  ];
+
   return (
-    <main className="min-h-screen bg-black text-white pb-20">
-      <Header />
+    <main>
+      {/* ГЕРОЙ */}
+      <section className="wrap grid gap-8 pt-6 md:pt-10 lg:grid-cols-2 lg:gap-14">
+        <div className="order-2 lg:order-1 lg:py-8">
+          <div className="flex items-center gap-3">
+            <span className="bg-acid px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-ink">
+              Pre-order only
+            </span>
+            <span className="text-[9px] uppercase tracking-[0.18em] text-muted">
+              School capsule / 2026
+            </span>
+          </div>
 
-      {/* HERO СЕКЦИЯ */}
-      <section className="pt-32 px-6 max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center min-h-[80vh]">
-        <div className="space-y-6">
-          <span className="inline-block px-3 py-1 border border-red-500 text-red-500 text-xs font-bold uppercase tracking-widest">Pre-order Only</span>
-          <h1 className="text-5xl md:text-7xl font-black uppercase leading-none tracking-tighter">School<br/>Jeans</h1>
-          <p className="text-zinc-400 text-lg max-w-md">Плотный деним. Прямой крой. Идеальная посадка.</p>
+          <h1 className="display mt-6 text-[clamp(3rem,8.5vw,7rem)]">
+            SCHOOL
+            <br />
+            JEANS
+          </h1>
 
-          <div className="flex gap-2 mt-8">
-            {SIZES.map(size => (
-              <button
-                key={size}
-                type="button"
-                onClick={() => { setSelectedSize(size); setNeedSize(false); }}
-                aria-label={`Размер ${size}`}
-                className={`w-12 h-12 border text-sm font-bold ${selectedSize === size ? 'bg-white text-black border-white' : 'border-white/20 hover:border-white'}`}>
-                {size}
-              </button>
-            ))}
+          <p className="mt-5 max-w-sm text-[13px] leading-relaxed text-muted">
+            Плотный деним, прямой крой и посадка, ради которой эту пару
+            заказывали заново. Каждая пара отшивается под заказ.
+          </p>
+
+          <div className="mt-7 border-t border-line pt-5">
+            <div className="mb-3 flex items-end justify-between">
+              <span className="eyebrow">Размер</span>
+              <span className="text-[9px] uppercase tracking-[0.14em] text-muted">
+                {selectedSize ? `Выбран: ${selectedSize}` : "Выберите размер"}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {SIZES.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setNeedSize(false);
+                  }}
+                  aria-pressed={selectedSize === size}
+                  aria-label={`Размер ${size}`}
+                  className={`h-11 min-w-[52px] border px-4 text-[11px] font-medium transition-colors ${
+                    selectedSize === size
+                      ? "border-ink bg-ink text-paper"
+                      : "border-line hover:border-ink"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+
+            <SizeGuide />
           </div>
 
           {needSize && (
-            <p className="text-[10px] text-red-500 uppercase tracking-wider animate-pulse">
+            <p className="mt-3 text-[9px] uppercase tracking-[0.14em] text-muted">
               Выберите размер, чтобы продолжить
             </p>
           )}
 
-          <SizeGuide />
-
           <button
             type="button"
             onClick={reserve}
-            className="block w-full py-5 bg-white text-black text-center font-black uppercase tracking-[4px] hover:bg-zinc-200 transition-colors mt-8">
-            Забронировать пару →
+            className="mt-6 flex w-full items-center justify-between gap-6 bg-ink px-6 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-paper transition-colors hover:bg-acid hover:text-ink md:py-5"
+          >
+            Забронировать пару
+            <span aria-hidden>→</span>
           </button>
+
+          <p className="mt-3 text-[9px] uppercase tracking-[0.14em] text-muted">
+            Отправка после отшива тиража · предоплата
+          </p>
         </div>
 
-        {/* ГАЛЕРЕЯ */}
-        <div className="flex flex-col gap-6">
-          {/* Главная картинка */}
-          <div className="relative w-full aspect-[3/4] bg-zinc-900 border border-white/10 overflow-hidden">
+        <div className="order-1 lg:order-2">
+          <div className="media relative aspect-[3/4] w-full overflow-hidden">
             <Image
               src="/shool_jeans_glav.jpg"
-              alt="School Jeans Lookbook"
+              alt="School Jeans — образ коллекции"
               fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover"
               priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
             />
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-              <p className="text-xs font-mono text-white/70 uppercase tracking-widest">Главный образ коллекции</p>
-            </div>
+            <span className="absolute bottom-3 left-3 bg-paper px-3 py-1.5 text-[9px] uppercase tracking-[0.18em]">
+              Full look / 01
+            </span>
           </div>
 
-          {/* Хаотичные футболки */}
-          <div className="grid grid-cols-2 gap-4">
-            <div className="relative aspect-square bg-zinc-900 border border-white/10 overflow-hidden translate-y-8">
-              <Image src="/sex_shirt.jpg" alt="SEX Shirt" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
-              <div className="absolute inset-0 flex items-end p-3 bg-black/60 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase leading-tight text-red-400">
-                  Только в комплекте<br/>с джинсами
-                </p>
-              </div>
+          <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="relative aspect-square overflow-hidden bg-paper-2">
+              <Image src="/sex_shirt.jpg" alt="SEX Shirt" fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover" />
+              <span className="absolute bottom-2 left-2 text-[8px] uppercase tracking-[0.14em] text-paper mix-blend-difference">
+                SEX Shirt
+              </span>
             </div>
-
-            <div className="relative aspect-square bg-zinc-900 border border-white/10 overflow-hidden -translate-y-4">
-              <Image src="/el_shirt.jpg" alt="EL Shirt" fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
-               <div className="absolute inset-0 flex items-end p-3 bg-black/60 backdrop-blur-sm">
-                <p className="text-[10px] font-bold uppercase leading-tight text-red-400">
-                  Только в комплекте<br/>с джинсами
-                </p>
-              </div>
+            <div className="relative aspect-square overflow-hidden bg-paper-2">
+              <Image src="/el_shirt.jpg" alt="Log Shirt" fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover" />
+              <span className="absolute bottom-2 left-2 text-[8px] uppercase tracking-[0.14em] text-paper mix-blend-difference">
+                Log Shirt
+              </span>
             </div>
           </div>
         </div>
       </section>
 
       {/* КОНСТРУКТОР ОБРАЗА */}
-      <section className="py-24 px-6 max-w-7xl mx-auto border-t border-white/10 mt-12">
-        <h2 className="text-3xl font-black uppercase mb-12 text-center">Собери комплект</h2>
+      <section className="wrap mt-16 border-t border-line pt-10 md:mt-24 md:pt-14">
+        <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+          <div>
+            <p className="eyebrow text-muted">Complete the set</p>
+            <h2 className="display-sm mt-3 text-[clamp(2rem,5vw,3.8rem)]">Собери комплект</h2>
+          </div>
+          <p className="max-w-xs text-[11px] leading-relaxed text-muted">
+            Футболки доступны только вместе с джинсами. При покупке полного
+            комплекта — скидка 15%.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
-          {[
-            { id: 'jeans', name: 'SCHOOL JEANS', product: jeans, active: true },
-            { id: 'sexShirt', name: 'SEX SHIRT', product: sexShirt, active: lookSelected.sexShirt },
-            { id: 'elShirt', name: 'EL SHIRT', product: elShirt, active: lookSelected.elShirt }
-          ].map((item) => (
+        <div className="mt-6 grid gap-3 md:grid-cols-3">
+          {lookItems.map((item) => (
             <div
-              key={item.id}
-              className={`p-6 border transition-all ${item.id !== 'jeans' ? 'cursor-pointer' : ''} ${item.active ? 'border-white bg-white/5' : 'border-white/10 opacity-50'}`}
+              key={item.key}
+              role={item.key === "jeans" ? undefined : "button"}
+              tabIndex={item.key === "jeans" ? undefined : 0}
+              aria-pressed={item.key === "jeans" ? undefined : item.active}
               onClick={() => {
-                if (item.id === 'sexShirt' || item.id === 'elShirt') toggleLook(item.id);
+                if (item.key !== "jeans") toggleLook(item.key);
               }}
+              onKeyDown={(event) => {
+                if (item.key !== "jeans" && (event.key === "Enter" || event.key === " ")) {
+                  event.preventDefault();
+                  toggleLook(item.key);
+                }
+              }}
+              className={`group relative border p-3 transition-colors ${
+                item.active ? "border-ink" : "border-line opacity-55 hover:opacity-80"
+              } ${item.key !== "jeans" ? "cursor-pointer" : ""}`}
             >
-              <div className="aspect-square relative mb-4 bg-zinc-900 overflow-hidden">
+              <div className="relative aspect-square overflow-hidden bg-paper-2">
                 {item.product && (
                   <Image
                     src={item.product.images[0]}
                     alt={item.name}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                   />
                 )}
+                <span
+                  className={`absolute top-2 right-2 grid h-7 w-7 place-items-center border text-[11px] ${
+                    item.active
+                      ? "border-ink bg-acid text-ink"
+                      : "border-ink/20 bg-paper/80 text-ink/50"
+                  }`}
+                  aria-hidden
+                >
+                  {item.active ? "✓" : "+"}
+                </span>
               </div>
-              <h3 className="font-bold uppercase text-sm">{item.name}</h3>
-              <p className="font-mono mt-2 font-numbers">
-                {item.product ? formatPrice(item.product.price) : "—"}
-              </p>
-              {item.id !== 'jeans' && (
-                <p className="text-[10px] text-red-500 mt-1 uppercase">Только с джинсами</p>
-              )}
+
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="text-[11px] font-medium uppercase tracking-[0.06em]">{item.name}</h3>
+                  <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-muted">
+                    {item.key === "jeans" ? "В комплекте" : "Только с джинсами"}
+                  </p>
+                </div>
+                <span className="text-[11px] tabular-nums">
+                  {item.product ? formatPrice(item.product.price) : "—"}
+                </span>
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="max-w-md mx-auto p-8 border border-white/20 bg-zinc-900/50 text-center">
-          <p className="text-zinc-500 uppercase tracking-widest text-xs mb-2">Итого</p>
-          <div className="flex items-center justify-center gap-4 mb-6">
-            {preview.discount > 0 && (
-              <span className="text-zinc-600 line-through font-mono font-numbers">
-                {formatPrice(preview.subtotal)}
+        <div className="mt-8 grid gap-5 border border-ink bg-ink p-6 text-paper md:grid-cols-[1fr_auto] md:items-end md:p-8">
+          <div>
+            <p className="eyebrow text-paper/45">Итого</p>
+            <div className="mt-2 flex items-baseline gap-3">
+              {preview.discount > 0 && (
+                <span className="text-[13px] tabular-nums text-paper/40 line-through">
+                  {formatPrice(preview.subtotal)}
+                </span>
+              )}
+              <span className="text-[clamp(1.8rem,4vw,2.8rem)] tabular-nums leading-none">
+                {formatPrice(preview.total)}
               </span>
-            )}
-            <span className="text-4xl font-black font-mono font-numbers">
-              {formatPrice(preview.total)}
-            </span>
-          </div>
-
-          {preview.discount > 0 && (
-            <p className="text-green-500 text-xs uppercase tracking-wider mb-6">
-              Скидка 15% за комплект
+            </div>
+            <p className="mt-2 text-[9px] uppercase tracking-[0.16em] text-paper/50">
+              {preview.discount > 0 ? "Скидка 15% за комплект применена" : "Скидка 15% при полном комплекте"}
             </p>
-          )}
+          </div>
 
           <button
             type="button"
             onClick={reserve}
-            className="block w-full py-4 bg-white text-black font-black uppercase tracking-[4px] hover:bg-zinc-200 transition-colors">
-            Купить комплект →
+            className="flex items-center justify-between gap-8 bg-paper px-6 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-ink transition-colors hover:bg-acid md:py-5"
+          >
+            Купить комплект
+            <span aria-hidden>→</span>
           </button>
         </div>
+
+        <Link
+          href="/catalog/school-jeans"
+          className="mt-6 inline-block text-[9px] uppercase tracking-[0.16em] text-muted hover:text-ink"
+        >
+          ← Вернуться в магазин
+        </Link>
       </section>
     </main>
   );

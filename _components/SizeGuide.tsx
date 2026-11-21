@@ -1,4 +1,5 @@
 "use client";
+
 import { useState } from "react";
 
 const sizes = [
@@ -12,44 +13,49 @@ export default function SizeGuide() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="w-full mt-4">
+    <div className="mt-3 w-full border-t border-line">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-3 border border-white/20 text-xs font-bold uppercase tracking-[3px] hover:bg-white/5 transition-colors flex items-center justify-between px-4"
         type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between py-4 text-[10px] font-medium uppercase tracking-[0.18em]"
       >
-        <span>Размерная сетка</span>
-        <span className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>▼</span>
+        <span>Таблица размеров</span>
+        <span
+          className={`text-[12px] transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`}
+          aria-hidden
+        >
+          +
+        </span>
       </button>
 
       {isOpen && (
-        <div className="border border-t-0 border-white/20 overflow-x-auto">
-          <table className="w-full text-xs text-left">
+        <div className="overflow-x-auto pb-4">
+          <table className="w-full border-collapse text-left text-[11px]">
             <thead>
-              <tr className="bg-zinc-900 border-b border-white/10">
-                <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Размер</th>
-                <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">ПОТ (см)</th>
-                <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Длина (см)</th>
-                <th className="py-3 px-4 font-mono text-zinc-500 uppercase tracking-widest">Низ (см)</th>
+              <tr className="border-y border-line text-[9px] uppercase tracking-[0.16em] text-muted">
+                <th className="py-2.5 pr-3 font-medium">Размер</th>
+                <th className="py-2.5 pr-3 font-medium">Пот (см)</th>
+                <th className="py-2.5 pr-3 font-medium">Длина (см)</th>
+                <th className="py-2.5 pr-3 font-medium">Низ (см)</th>
               </tr>
             </thead>
             <tbody>
               {sizes.map((row) => (
-                <tr key={row.size} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
-                  <td className="py-3 px-4 font-bold font-mono">{row.size}</td>
-                  <td className="py-3 px-4 font-mono text-zinc-400">{row.waist}</td>
-                  <td className="py-3 px-4 font-mono text-zinc-400">{row.length}</td>
-                  <td className="py-3 px-4 font-mono text-zinc-400">{row.leg}</td>
+                <tr key={row.size} className="border-b border-line/70">
+                  <td className="py-2.5 pr-3 font-medium">{row.size}</td>
+                  <td className="py-2.5 pr-3 tabular-nums text-muted">{row.waist}</td>
+                  <td className="py-2.5 pr-3 tabular-nums text-muted">{row.length}</td>
+                  <td className="py-2.5 pr-3 tabular-nums text-muted">{row.leg}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <div className="p-4 bg-zinc-900/50 border-t border-white/5">
-            <p className="text-[10px] text-zinc-600 uppercase tracking-wider leading-relaxed">
-              ПОТ — полуобхват талии. Измерения указаны в сантиметрах. Допускается погрешность ±1 см.
-            </p>
-          </div>
+          <p className="pt-3 text-[9px] leading-relaxed uppercase tracking-[0.12em] text-muted">
+            ПОТ — полуобхват талии. Измерения указаны в сантиметрах.
+            Допускается погрешность ±1 см.
+          </p>
         </div>
       )}
     </div>
