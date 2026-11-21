@@ -18,6 +18,7 @@ const evseevGlav = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.evseev.store"),
   title: {
     default: "EVSEEV — Streetwear из Калининграда",
     template: "%s — EVSEEV",
@@ -28,8 +29,25 @@ export const metadata: Metadata = {
     title: "EVSEEV — Streetwear из Калининграда",
     description:
       "Официальный магазин бренда EVSEEV. Архивные вещи, капсульные коллекции и обучение шитью.",
+    url: "/",
+    siteName: "EVSEEV",
     type: "website",
     locale: "ru_RU",
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "EVSEEV — streetwear из Калининграда",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EVSEEV — Streetwear из Калининграда",
+    description:
+      "Официальный магазин бренда EVSEEV. Архивные вещи, капсульные коллекции и обучение шитью.",
+    images: ["/og.jpg"],
   },
 };
 
