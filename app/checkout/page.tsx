@@ -282,7 +282,7 @@ export default function CheckoutPage() {
                     {item.product.name}
                   </p>
                   <p className="mt-1 text-[9px] uppercase tracking-[0.14em] text-muted">
-                    {item.size || "ONE SIZE"}
+                    {item.product.isMystery ? "Рандом / случайный выбор" : item.size || "ONE SIZE"}
                   </p>
                   <p className="mt-1 text-[10px] tabular-nums text-muted">
                     {formatPrice(item.product.price * item.quantity)}

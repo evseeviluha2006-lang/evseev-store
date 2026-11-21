@@ -4,27 +4,21 @@ import Link from "next/link";
 export const metadata: Metadata = {
   title: "Контакты",
   description:
-    "Связаться с EVSEEV: Telegram, Instagram, телефон и адрес студии в Калининграде.",
+    "Связаться с EVSEEV: Telegram-канал, Instagram и адрес студии в Калининграде.",
 };
 
 const socials = [
   {
-    label: "Telegram",
-    value: "@evs_clo",
-    href: "https://t.me/evs_clo",
-    note: "Быстрее всего — здесь",
+    label: "Telegram-канал",
+    value: "@evseevdizain",
+    href: "https://t.me/evseevdizain",
+    note: "Новости, дропы и анонсы",
   },
   {
     label: "Instagram",
     value: "@evseev_design",
     href: "https://www.instagram.com/evseev_design",
     note: "Процесс, архив, новые вещи",
-  },
-  {
-    label: "Телефон",
-    value: "+7 902 252 76 34",
-    href: "tel:+79022527634",
-    note: "Пн–Вс / 10:00–22:00",
   },
 ];
 
@@ -109,7 +103,7 @@ export default function ContactsPage() {
 
           <div className="mt-5 border border-ink bg-paper p-4 text-ink">
             <p className="text-[9px] uppercase leading-relaxed tracking-[0.13em]">
-              * В Telegram и Instagram обычно отвечаю быстрее, чем по телефону.
+              * В Telegram-канале и Instagram — все новости, дропы и актуальные контакты.
             </p>
           </div>
         </div>

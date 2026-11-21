@@ -56,6 +56,7 @@ export const collectionLabels: Record<string, string> = {
   dipa: "DIPA",
   "18plus": "18+",
   accessories: "ACCESSORIES",
+  keychains: "KEYCHAINS",
   test: "TEST",
   radioevs: "RADIOEVS",
   winter: "WINTER 2.6",

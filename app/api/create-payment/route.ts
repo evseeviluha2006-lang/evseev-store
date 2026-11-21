@@ -89,7 +89,7 @@ function buildReceipt(
       phone: customer.phone,
     },
     items: totals.items.map((item) => ({
-      description: item.product.name.slice(0, 128),
+      description: `${item.product.name}${item.product.isMystery ? " (Рандом / случайный выбор)" : ""}`.slice(0, 128),
       quantity: String(item.quantity),
       amount: {
         value: item.product.price.toFixed(2),
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
       console.error("Нет ключей ЮKassa в env (YOOKASSA_SHOP_ID / YOOKASSA_SECRET_KEY)");
       // Пользователю не показываем техническую формулировку — она пугает.
       return fail(
-        "Оплата временно недоступна. Напишите в Telegram @evs_clo — оформим заказ вручную.",
+        "Оплата временно недоступна. Напишите в наш Telegram-канал https://t.me/evseevdizain — оформим заказ вручную.",
         503
       );
     }
@@ -168,7 +168,10 @@ export async function POST(request: Request) {
         customer_address: customer.address,
         customer_comment: customer.comment,
         items: totals.items
-          .map((item) => `${item.id}/${item.size || "-"}x${item.quantity}`)
+          .map(
+            (item) =>
+              `${item.id}/${item.size || "-"}x${item.quantity}${item.product.isMystery ? "/random" : ""}`
+          )
           .join(", ")
           .slice(0, 512),
       },
@@ -212,12 +215,12 @@ export async function POST(request: Request) {
         `<b>Сумма:</b> ${escapeHtml(totals.total.toFixed(2))} ₽`,
         "",
         totals.items
-          .map(
-            (item) =>
-              `• ${escapeHtml(item.product.name)} — ${escapeHtml(
-                item.size || "без размера"
-              )} × ${item.quantity}`
-          )
+          .map((item) => {
+            const variant = item.product.isMystery
+              ? "Рандом / случайный выбор"
+              : item.size || "без размера";
+            return `• ${escapeHtml(item.product.name)} — ${escapeHtml(variant)} × ${item.quantity}`;
+          })
           .join("\n"),
         "",
         `<b>Имя:</b> ${escapeHtml(customer.name)}`,

@@ -87,11 +87,11 @@ export default function EducationPage() {
         alert("Заявка успешно отправлена! Я свяжусь с тобой.");
         closeModal();
       } else {
-        alert("Ошибка отправки. Попробуй написать мне напрямую в Telegram.");
+        alert("Ошибка отправки. Попробуй написать нам в Telegram-канал: https://t.me/evseevdizain");
       }
     } catch (error) {
       console.error("Ошибка отправки заявки:", error);
-      alert("Ошибка отправки. Попробуй написать мне напрямую в Telegram.");
+      alert("Ошибка отправки. Попробуй написать нам в Telegram-канал: https://t.me/evseevdizain");
     } finally {
       setIsSending(false);
     }
@@ -238,12 +238,12 @@ export default function EducationPage() {
           </div>
 
           <a
-            href="https://t.me/evs_clo"
+            href="https://t.me/evseevdizain"
             target="_blank"
             rel="noopener noreferrer"
             className="flex w-fit items-center gap-4 border border-paper px-6 py-3.5 text-[10px] font-medium uppercase tracking-[0.16em] transition-colors hover:bg-paper hover:text-ink"
           >
-            Спросить в Telegram
+            Telegram-канал
             <span aria-hidden>↗</span>
           </a>
         </div>

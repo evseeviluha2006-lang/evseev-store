@@ -34,7 +34,7 @@ const columns = [
     title: "СВЯЗЬ",
     links: [
       { label: "Контакты", href: "/contacts" },
-      { label: "Telegram", href: "https://t.me/evs_clo" },
+      { label: "Telegram-канал", href: "https://t.me/evseevdizain" },
       { label: "Instagram", href: "https://www.instagram.com/evseev_design" },
       { label: "Оферта", href: "/offer" },
     ],
@@ -68,19 +68,13 @@ export default function Footer() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <a
-                href="https://t.me/evs_clo"
+                href="https://t.me/evseevdizain"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 bg-paper px-6 py-4 text-[10px] font-medium uppercase tracking-[0.18em] text-ink transition-colors hover:bg-ink hover:text-paper hover:border hover:border-paper"
               >
-                Написать в Telegram
+                Telegram-канал
                 <span aria-hidden>↗</span>
-              </a>
-              <a
-                href="tel:+79022527634"
-                className="border border-paper/25 px-6 py-4 text-[10px] uppercase tracking-[0.18em] text-paper/80 transition-colors hover:border-paper hover:text-paper"
-              >
-                +7 902 252 76 34
               </a>
             </div>
 

@@ -47,14 +47,14 @@ export default function SuccessPage() {
         </div>
 
         <p className="mt-6 border-t border-line pt-4 text-[9px] uppercase leading-relaxed tracking-[0.13em] text-muted">
-          Если оплата списалась, а заказ не подтвердился — напиши в Telegram{" "}
+          Если оплата списалась, а заказ не подтвердился — напиши в Telegram-канал{" "}
           <a
-            href="https://t.me/evs_clo"
+            href="https://t.me/evseevdizain"
             target="_blank"
             rel="noopener noreferrer"
             className="text-ink underline underline-offset-4"
           >
-            @evs_clo
+            @evseevdizain
           </a>
         </p>
       </div>

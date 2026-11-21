@@ -10,7 +10,7 @@ import ProductCard from "@/_components/ProductCard";
 import SectionHead from "@/_components/SectionHead";
 import SizeGuide from "@/_components/SizeGuide";
 import { collectionLabel } from "@/lib/collections";
-import { formatPrice, products } from "@/lib/products";
+import { formatPrice, MAX_QUANTITY, products } from "@/lib/products";
 
 export default function ProductPage() {
   const params = useParams();
@@ -19,6 +19,8 @@ export default function ProductPage() {
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [mysteryAccepted, setMysteryAccepted] = useState(false);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
 
@@ -196,6 +198,12 @@ export default function ProductPage() {
               ))}
             </div>
           )}
+
+          {product.isMystery && (
+            <p className="mt-3 text-[9px] uppercase tracking-[0.14em] text-muted">
+              Примеры возможных вариантов
+            </p>
+          )}
         </div>
 
         {/* ИНФОРМАЦИЯ */}
@@ -287,26 +295,91 @@ export default function ProductPage() {
 
           {/* КНОПКА */}
           <div className="mt-7">
-            {selectedSize ? (
-              <AddToCartButton
-                productId={product.id}
-                size={selectedSize}
-                customText={product.isPreorder ? "Забронировать пару" : undefined}
-              />
-            ) : (
-              <>
-                <button
-                  type="button"
-                  disabled
-                  className="w-full cursor-not-allowed bg-ink/10 py-4 text-[10px] font-medium uppercase tracking-[0.2em] text-ink/40 md:py-5"
-                >
-                  Добавить в корзину
-                </button>
-                <p className="mt-2 text-center text-[9px] uppercase tracking-[0.14em] text-muted">
-                  Выберите размер, чтобы продолжить
+            {product.isMystery && (
+              <div className="mb-5 border border-ink bg-paper-2/60 p-4">
+                <p className="text-[10px] font-medium uppercase tracking-[0.16em] text-ink">
+                  Важно: случайная ключница
                 </p>
-              </>
+                <p className="mt-2 text-[12px] leading-relaxed text-muted">
+                  Вы заказываете случайную ключницу. Выбрать конкретный дизайн нельзя — вы не знаете заранее, какая именно модель приедет, это будет сюрприз при получении.
+                </p>
+              </div>
             )}
+
+            {product.isMystery && (
+              <div className="mb-5 flex items-center justify-between gap-4 border-b border-line pb-5">
+                <span className="eyebrow text-muted">Количество</span>
+                <div className="flex items-center border border-line">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    aria-label="Уменьшить количество"
+                    className="grid h-10 w-10 place-items-center text-[14px] transition-colors hover:bg-ink hover:text-paper"
+                  >
+                    −
+                  </button>
+                  <span className="grid h-10 w-10 place-items-center border-x border-line text-[11px] tabular-nums">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity((q) => Math.min(MAX_QUANTITY, q + 1))}
+                    aria-label="Увеличить количество"
+                    className="grid h-10 w-10 place-items-center text-[14px] transition-colors hover:bg-ink hover:text-paper"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {product.isMystery && (
+              <label className="mb-5 flex cursor-pointer items-start gap-3 border border-line p-4 text-[11px] leading-relaxed text-muted">
+                <input
+                  type="checkbox"
+                  checked={mysteryAccepted}
+                  onChange={(e) => setMysteryAccepted(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-black"
+                />
+                <span>Я понимаю, что получу случайную ключницу</span>
+              </label>
+            )}
+
+            {(() => {
+              const needsSize = product.sizes.length > 0;
+              const sizeOk = !needsSize || Boolean(selectedSize);
+              const mysteryOk = !product.isMystery || mysteryAccepted;
+              const canAdd = sizeOk && mysteryOk;
+              const resolvedSize = selectedSize || product.sizes[0] || "";
+
+              if (canAdd) {
+                return (
+                  <AddToCartButton
+                    productId={product.id}
+                    size={resolvedSize}
+                    quantity={product.isMystery ? quantity : 1}
+                    customText={product.isPreorder ? "Забронировать пару" : undefined}
+                  />
+                );
+              }
+
+              return (
+                <>
+                  <AddToCartButton
+                    productId={product.id}
+                    size={resolvedSize}
+                    quantity={product.isMystery ? quantity : 1}
+                    disabled
+                    customText={product.isPreorder ? "Забронировать пару" : undefined}
+                  />
+                  <p className="mt-2 text-center text-[9px] uppercase tracking-[0.14em] text-muted">
+                    {needsSize && !sizeOk
+                      ? "Выберите размер, чтобы продолжить"
+                      : "Подтвердите, что вы понимаете условия случайного выбора"}
+                  </p>
+                </>
+              );
+            })()}
           </div>
 
           {/* ДЕТАЛИ */}

@@ -272,12 +272,12 @@ export default function Header() {
 
           <div className="mt-auto space-y-3 pt-10">
             <a
-              href="https://t.me/evs_clo"
+              href="https://t.me/evseevdizain"
               target="_blank"
               rel="noopener noreferrer"
               className="u-link text-[11px] uppercase tracking-[0.18em]"
             >
-              Telegram @evs_clo
+              Telegram-канал
             </a>
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted">
               Калининград · 10:00 — 22:00

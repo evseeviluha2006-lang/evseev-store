@@ -17,6 +17,8 @@ export type Product = {
   preorderDate?: string;
   /** Ограниченный дроп */
   limitedDrop?: boolean;
+  /** Товар-сюрприз: покупатель не выбирает конкретный вариант */
+  isMystery?: boolean;
   /** Скрыть из общего каталога, но оставить карточку и покупку доступными */
   hidden?: boolean;
 };
@@ -107,6 +109,27 @@ export const products: Product[] = [
     sizes: ["ONE SIZE"],
     collection: "accessories",
     limitedDrop: true,
+  },
+  {
+    id: "random-keychain",
+    name: "RANDOM KEY HOLDER",
+    price: 1490,
+    images: [
+      "/keychain-random-1.jpg",
+      "/keychain-random-2.jpg",
+      "/keychain-random-3.jpg",
+      "/keychain-random-4.jpg",
+      "/keychain-random-5.jpg",
+      "/keychain-random-6.jpg",
+      "/keychain-random-7.jpg",
+      "/keychain-random-8.jpg",
+    ],
+    description:
+      "Ключница-сюрприз: вы получаете одну случайную ключницу из дропа. Конкретный дизайн заранее неизвестен и выбрать его нельзя. Крепление на стену с помощью двустороннего скотча — скотч уже идёт в комплекте, сверлить стену не нужно.",
+    material: "ДЕРЕВО / МЕТАЛЛ",
+    sizes: [],
+    collection: "keychains",
+    isMystery: true,
   },
   {
     id: "hoodie-tvar",
@@ -294,7 +317,7 @@ export function formatPrice(value: number): string {
   return `${rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u00A0")} ₽`;
 }
 
-export type ProductCategory = "tops" | "bottoms" | "outerwear" | "accessories";
+export type ProductCategory = "tops" | "bottoms" | "outerwear" | "accessories" | "keychains";
 
 export const productCategories: { id: ProductCategory | "all"; label: string }[] = [
   { id: "all", label: "ВСЁ" },
@@ -302,10 +325,12 @@ export const productCategories: { id: ProductCategory | "all"; label: string }[]
   { id: "bottoms", label: "НИЗ" },
   { id: "outerwear", label: "ВЕРХНЯЯ ОДЕЖДА" },
   { id: "accessories", label: "АКСЕССУАРЫ" },
+  { id: "keychains", label: "КЛЮЧНИЦЫ" },
 ];
 
 /** Категория выводится из названия и коллекции, чтобы не дублировать данные в каталоге. */
 export function getProductCategory(product: Product): ProductCategory {
+  if (product.collection === "keychains") return "keychains";
   if (product.collection === "accessories") return "accessories";
   if (/(ШАПКА|HAT|CAP)/i.test(product.name)) return "accessories";
   if (/(PANTS|JEANS|ШТАНЫ|БРЮКИ)/i.test(product.name)) return "bottoms";

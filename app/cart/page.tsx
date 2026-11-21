@@ -152,7 +152,7 @@ export default function CartPage() {
                     </label>
                   ) : (
                     <p className="mt-2 text-[9px] uppercase tracking-[0.14em] text-muted">
-                      ONE SIZE
+                      {item.product.isMystery ? "Рандом / случайный выбор" : "ONE SIZE"}
                     </p>
                   )}
 
