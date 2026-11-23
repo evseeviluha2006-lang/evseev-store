@@ -149,7 +149,7 @@ export default function Home() {
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="none"
               className="absolute inset-0 h-full w-full scale-105 object-cover blur-[2px] grayscale"
             />
             <div className="absolute inset-0 bg-ink/20" />

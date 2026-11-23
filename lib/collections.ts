@@ -60,6 +60,7 @@ export const collectionLabels: Record<string, string> = {
   test: "TEST",
   radioevs: "RADIOEVS",
   winter: "WINTER 2.6",
+  capsule: "CAPSULE DROP",
 };
 
 export function collectionLabel(collection: string) {

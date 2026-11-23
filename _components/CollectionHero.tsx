@@ -30,7 +30,7 @@ export default function CollectionHero({
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           className="absolute inset-0 h-full w-full object-cover"
         />
       ) : (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -11,6 +11,7 @@ import Marquee from "@/_components/Marquee";
 
 const nav = [
   { href: "/catalog", label: "МАГАЗИН" },
+  { href: "/capsule", label: "CAPSULE DROP" },
   { href: "/collections", label: "КОЛЛЕКЦИИ" },
   { href: "/education", label: "АКАДЕМИЯ" },
   { href: "/contacts", label: "КОНТАКТЫ" },
@@ -18,17 +19,17 @@ const nav = [
 
 const shopMenu = [
   {
-    title: "КАТЕГОРИИ",
+    title: "РљРђРўР•Р“РћР РР",
     links: [
-      { label: "Всё", href: "/catalog" },
-      { label: "Верх", href: "/catalog?cat=tops" },
-      { label: "Низ", href: "/catalog?cat=bottoms" },
-      { label: "Верхняя одежда", href: "/catalog?cat=outerwear" },
-      { label: "Аксессуары", href: "/catalog?cat=accessories" },
+      { label: "Р’СЃС‘", href: "/catalog" },
+      { label: "Р’РµСЂС…", href: "/catalog?cat=tops" },
+      { label: "РќРёР·", href: "/catalog?cat=bottoms" },
+      { label: "Р’РµСЂС…РЅСЏСЏ РѕРґРµР¶РґР°", href: "/catalog?cat=outerwear" },
+      { label: "РђРєСЃРµСЃСЃСѓР°СЂС‹", href: "/catalog?cat=accessories" },
     ],
   },
   {
-    title: "КОЛЛЕКЦИИ",
+    title: "РљРћР›Р›Р•РљР¦РР",
     links: collections.map((collection) => ({
       label: collection.title,
       href: collection.href,
@@ -37,10 +38,10 @@ const shopMenu = [
 ];
 
 const ticker = [
-  "БЕСПЛАТНАЯ ДОСТАВКА ОТ 10 000 ₽",
-  "НОВЫЙ ДРОП — WINTER 2.6",
-  "КОМПЛЕКТ ИЗ 3 ВЕЩЕЙ — СКИДКА 15%",
-  "СДЕЛАНО В КАЛИНИНГРАДЕ",
+  "Р‘Р•РЎРџР›РђРўРќРђРЇ Р”РћРЎРўРђР’РљРђ РћРў 10 000 в‚Ѕ",
+  "РќРћР’Р«Р™ Р”Р РћРџ вЂ” WINTER 2.6",
+  "РљРћРњРџР›Р•РљРў РР— 3 Р’Р•Р©Р•Р™ вЂ” РЎРљРР”РљРђ 15%",
+  "РЎР”Р•Р›РђРќРћ Р’ РљРђР›РРќРРќР“Р РђР”Р•",
 ];
 
 export default function Header() {
@@ -72,7 +73,7 @@ export default function Header() {
 
   return (
     <>
-      {/* ВЕРХНЯЯ БЕГУЩАЯ СТРОКА */}
+      {/* Р’Р•Р РҐРќРЇРЇ Р‘Р•Р“РЈР©РђРЇ РЎРўР РћРљРђ */}
       <div className="bg-ink text-paper">
         <Marquee
           items={ticker}
@@ -82,15 +83,15 @@ export default function Header() {
         />
       </div>
 
-      {/* ШАПКА */}
+      {/* РЁРђРџРљРђ */}
       <header className="sticky top-0 z-50 border-b border-line bg-paper/90 backdrop-blur-xl">
         <div className="wrap flex h-16 items-center justify-between gap-6 md:h-[72px]">
-          {/* МОБИЛЬНОЕ МЕНЮ */}
+          {/* РњРћР‘РР›Р¬РќРћР• РњР•РќР® */}
           <button
             type="button"
             onClick={() => setIsMenuOpen(true)}
             className="-ml-2 flex h-11 w-11 flex-col items-start justify-center gap-[5px] px-2 md:hidden"
-            aria-label="Открыть меню"
+            aria-label="РћС‚РєСЂС‹С‚СЊ РјРµРЅСЋ"
             aria-expanded={isMenuOpen}
           >
             <span className="h-px w-6 bg-ink" />
@@ -98,11 +99,11 @@ export default function Header() {
             <span className="h-px w-4 bg-ink" />
           </button>
 
-          {/* ЛОГОТИП */}
+          {/* Р›РћР“РћРўРРџ */}
           <Link
             href="/"
             onClick={() => setIsMenuOpen(false)}
-            aria-label="EVSEEV — на главную"
+            aria-label="EVSEEV вЂ” РЅР° РіР»Р°РІРЅСѓСЋ"
             className="flex shrink-0 items-center gap-2"
           >
             <Image
@@ -115,11 +116,11 @@ export default function Header() {
             />
             <span className="text-[26px] leading-none font-bold tracking-[-0.07em] uppercase md:text-[30px]">
               EVSEEV
-              <sup className="ml-0.5 align-super text-[8px] tracking-normal">®</sup>
+              <sup className="ml-0.5 align-super text-[8px] tracking-normal">В®</sup>
             </span>
           </Link>
 
-          {/* ДЕСКТОП-МЕНЮ */}
+          {/* Р”Р•РЎРљРўРћРџ-РњР•РќР® */}
           <nav className="hidden flex-1 items-center justify-center gap-7 lg:gap-10 md:flex">
             {nav.map((item) => (
               <div
@@ -165,14 +166,15 @@ export default function Header() {
                         href="/collections/winter-2-6"
                         className="group relative block aspect-[3/4] overflow-hidden bg-paper-2"
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src="/winter26-cover.jpg"
                           alt="Winter 2.6"
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          fill
+                          sizes="220px"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                         />
                         <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-[10px] font-medium uppercase tracking-[0.16em] text-paper">
-                          WINTER 2.6 →
+                          WINTER 2.6 в†’
                         </span>
                       </Link>
                     </div>
@@ -182,38 +184,38 @@ export default function Header() {
             ))}
           </nav>
 
-          {/* ПРАВАЯ ЧАСТЬ */}
+          {/* РџР РђР’РђРЇ Р§РђРЎРўР¬ */}
           <div className="flex shrink-0 items-center gap-3 md:gap-5">
             <Link
               href="/likes"
               className="hidden items-center gap-1.5 text-[10px] uppercase tracking-[0.16em] hover:text-muted transition-colors sm:flex"
-              aria-label={`Избранное, товаров: ${likedCount}`}
+              aria-label={`РР·Р±СЂР°РЅРЅРѕРµ, С‚РѕРІР°СЂРѕРІ: ${likedCount}`}
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
               </svg>
-              <span className="hidden lg:inline">ИЗБРАННОЕ</span>
+              <span className="hidden lg:inline">РР—Р‘Р РђРќРќРћР•</span>
               <span>({likedCount})</span>
             </Link>
 
             <Link
               href="/cart"
               className="group flex items-center gap-2 border border-ink px-3.5 py-2.5 text-[10px] font-medium uppercase tracking-[0.16em] transition-colors hover:bg-ink hover:text-paper md:px-4"
-              aria-label={`Корзина, товаров: ${cartCount}`}
+              aria-label={`РљРѕСЂР·РёРЅР°, С‚РѕРІР°СЂРѕРІ: ${cartCount}`}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
                 <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
                 <path d="M3 6h18" />
                 <path d="M16 10a4 4 0 0 1-8 0" />
               </svg>
-              <span className="hidden sm:inline">КОРЗИНА</span>
+              <span className="hidden sm:inline">РљРћР Р—РРќРђ</span>
               <span className="tabular-nums">({cartCount})</span>
             </Link>
           </div>
         </div>
       </header>
 
-      {/* МОБИЛЬНОЕ МЕНЮ */}
+      {/* РњРћР‘РР›Р¬РќРћР• РњР•РќР® */}
       <div
         className={`fixed inset-0 z-[70] flex flex-col bg-paper transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] md:hidden ${
           isMenuOpen ? "translate-x-0" : "translate-x-full"
@@ -222,13 +224,13 @@ export default function Header() {
       >
         <div className="flex h-16 items-center justify-between border-b border-line px-[18px]">
           <span className="text-[24px] font-bold leading-none tracking-[-0.07em] uppercase">
-            EVSEEV<sup className="ml-0.5 align-super text-[8px]">®</sup>
+            EVSEEV<sup className="ml-0.5 align-super text-[8px]">В®</sup>
           </span>
           <button
             type="button"
             onClick={() => setIsMenuOpen(false)}
             className="-mr-2 flex h-11 w-11 items-center justify-center"
-            aria-label="Закрыть меню"
+            aria-label="Р—Р°РєСЂС‹С‚СЊ РјРµРЅСЋ"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.4" aria-hidden>
               <path d="M5 5l14 14M19 5 5 19" />
@@ -259,14 +261,14 @@ export default function Header() {
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center justify-between border border-line px-4 py-4 text-[11px] uppercase tracking-[0.16em]"
             >
-              Избранное <span className="tabular-nums">{likedCount}</span>
+              РР·Р±СЂР°РЅРЅРѕРµ <span className="tabular-nums">{likedCount}</span>
             </Link>
             <Link
               href="/cart"
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center justify-between border border-ink bg-ink px-4 py-4 text-[11px] uppercase tracking-[0.16em] text-paper"
             >
-              Корзина <span className="tabular-nums">{cartCount}</span>
+              РљРѕСЂР·РёРЅР° <span className="tabular-nums">{cartCount}</span>
             </Link>
           </div>
 
@@ -277,17 +279,17 @@ export default function Header() {
               rel="noopener noreferrer"
               className="u-link text-[11px] uppercase tracking-[0.18em]"
             >
-              Telegram-канал
+              Telegram-РєР°РЅР°Р»
             </a>
             <p className="text-[10px] uppercase tracking-[0.18em] text-muted">
-              Калининград · 10:00 — 22:00
+              РљР°Р»РёРЅРёРЅРіСЂР°Рґ В· 10:00 вЂ” 22:00
             </p>
             <div className="flex gap-6 pt-2">
               <Link href="/manifest" className="u-link text-[10px] uppercase tracking-[0.18em] text-muted">
-                Манифест
+                РњР°РЅРёС„РµСЃС‚
               </Link>
               <Link href="/offer" className="u-link text-[10px] uppercase tracking-[0.18em] text-muted">
-                Оферта
+                РћС„РµСЂС‚Р°
               </Link>
             </div>
           </div>
