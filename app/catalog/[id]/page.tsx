@@ -358,7 +358,8 @@ export default function ProductPage() {
                     productId={product.id}
                     size={resolvedSize}
                     quantity={product.isMystery ? quantity : 1}
-                    customText={product.isPreorder ? "Забронировать пару" : undefined}
+                    customText={product.isPreorder ? "Оформить предзаказ" : undefined}
+                    redirectTo={product.isPreorder ? "/checkout" : undefined}
                   />
                 );
               }
@@ -370,7 +371,8 @@ export default function ProductPage() {
                     size={resolvedSize}
                     quantity={product.isMystery ? quantity : 1}
                     disabled
-                    customText={product.isPreorder ? "Забронировать пару" : undefined}
+                    customText={product.isPreorder ? "Оформить предзаказ" : undefined}
+                    redirectTo={product.isPreorder ? "/checkout" : undefined}
                   />
                   <p className="mt-2 text-center text-[9px] uppercase tracking-[0.14em] text-muted">
                     {needsSize && !sizeOk

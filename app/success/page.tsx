@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ClearCartOnSuccess from "@/_components/ClearCartOnSuccess";
 
 export const metadata: Metadata = {
   title: "Заказ оплачен",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 export default function SuccessPage() {
   return (
     <main className="wrap flex min-h-[68vh] items-center justify-center py-16">
+      <ClearCartOnSuccess />
       <div className="w-full max-w-xl border-t border-ink pt-7">
         <div className="flex items-center justify-between gap-4">
           <p className="eyebrow text-muted">Order confirmed</p>

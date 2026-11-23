@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { addToCart } from "@/lib/cart";
 import { getProduct } from "@/lib/products";
 
@@ -11,6 +12,7 @@ type AddToCartButtonProps = {
   customText?: string;
   disabled?: boolean;
   className?: string;
+  redirectTo?: string;
 };
 
 export default function AddToCartButton({
@@ -20,11 +22,13 @@ export default function AddToCartButton({
   customText,
   disabled = false,
   className = "",
+  redirectTo,
 }: AddToCartButtonProps) {
   const [isAdded, setIsAdded] = useState(false);
+  const router = useRouter();
 
   const handleAdd = () => {
-    if (disabled) return;
+    if (disabled || isAdded) return;
     const product = getProduct(productId);
 
     if (!product) {
@@ -35,6 +39,12 @@ export default function AddToCartButton({
     const resolvedSize = size || product.sizes[0] || "";
 
     addToCart(product.id, resolvedSize, quantity);
+
+    if (redirectTo) {
+      setIsAdded(true);
+      router.push(redirectTo);
+      return;
+    }
 
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 2000);

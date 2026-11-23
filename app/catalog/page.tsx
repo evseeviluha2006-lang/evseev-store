@@ -29,7 +29,8 @@ export default async function CatalogPage({ searchParams }: Props) {
         </div>
       </section>
 
-      <CatalogGrid initialCategory={cat} />
+      {/* key: при переходе по ?cat=… из меню компонент перемонтируется и берёт новый фильтр */}
+      <CatalogGrid key={cat ?? "all"} initialCategory={cat} />
     </main>
   );
 }

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useCartLines, writeCart } from "@/lib/cart";
+import { useCartLines } from "@/lib/cart";
 import { computeTotals, formatPrice } from "@/lib/products";
 import { useIsClient } from "@/lib/use-is-client";
 
@@ -63,7 +63,6 @@ export default function CheckoutPage() {
         .catch(() => ({}));
 
       if (data.url) {
-        writeCart([]);
         window.location.assign(data.url);
       } else {
         alert("Ошибка при создании платежа: " + (data.error || "Попробуйте позже"));
