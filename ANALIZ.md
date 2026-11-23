@@ -17,8 +17,8 @@
 ### 1.1. Токен Telegram-бота утёк в браузер ⚠️ САМОЕ СРОЧНОЕ
 `lib/telegram.ts`:
 ```ts
-const BOT_TOKEN = "7765297336:AAFP8gz83t1WPcbQ9U6Fc8dl_JYqmgbLEds";
-const CHAT_ID = "7465159990";
+const BOT_TOKEN = "***ТОКЕН УДАЛЁН ИЗ ДОКУМЕНТА***";
+const CHAT_ID = "***ID УДАЛЁН***";
 ```
 Файл импортируется в `app/education/page.tsx`, у которого стоит `"use client"`. Значит токен **попадает в клиентский JS-бандл**: любой открывает DevTools → Sources → ищет `api.telegram.org` → забирает токен.
 
